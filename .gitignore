@@ -23,6 +23,12 @@
 hs_err_pid*
 replay_pid*
 
-backend/backend/src/main/resources/application.properties
+# Archivos de la carpeta principal
+/*.png
+/*.docx
 
-backend/frontend/Estructura/img/
+# Imágenes del frontend
+/frontend/Estructura/img/
+
+# Configuración del backend
+/backend/src/main/resources/application.properties
