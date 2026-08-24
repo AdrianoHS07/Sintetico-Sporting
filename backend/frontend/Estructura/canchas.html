@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sporting Club - Canchas</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+
+body{
+    background-image:url("img/CANCHOTAAAAA.png");
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+    min-height:100vh;
+}
+
+.contenedor{
+    text-align:center;
+    padding-top:30px;
+}
+
+.escudo{
+    width:80px;
+    margin-bottom:10px;
+}
+
+h1{
+    color:white;
+    margin-bottom:10px;
+}
+
+.subtitulo{
+    color:white;
+    margin-bottom:50px;
+}
+
+.cancha{
+    background:rgba(0, 0, 0, 0.80);
+    
+    color:white;
+    
+    border: 2px solid #c62828;
+
+    width:350px;
+
+    margin:25px auto;
+
+    padding:25px;
+
+    border-radius:15px;
+
+    box-shadow:0 5px 15px rgba(0,0,0,0.5);
+}
+
+.cancha h2{
+    color:white;
+    margin-bottom:10px;
+}
+
+.cancha p{
+    margin-bottom:10px;
+}
+
+button{
+    background:#c62828;
+
+    color:white;
+
+    border:none;
+
+    padding:12px 25px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    font-weight:bold;
+
+    transition:0.3s;
+}
+
+button:hover{
+    background:#e53935;
+
+    transform:scale(1.05);
+}
+/* ---------------------- */
+/* MENÚ HAMBURGUESA */
+/* ---------------------- */
+
+#menu-toggle{
+
+display:none;
+
+}
+
+.hamburguesa{
+
+position:fixed;
+
+top:25px;
+
+left:25px;
+
+width:55px;
+
+height:55px;
+
+background:#c62828;
+
+color:white;
+
+font-size:30px;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+border-radius:12px;
+
+cursor:pointer;
+
+z-index:1001;
+
+transition:.3s;
+
+box-shadow:0 5px 20px rgba(0,0,0,.35);
+
+}
+
+.hamburguesa:hover{
+
+background:#e53935;
+
+transform:scale(1.08);
+
+}
+
+.menu-lateral{
+
+position:fixed;
+
+top:0;
+
+left:-300px;
+
+width:280px;
+
+height:100%;
+
+background:#171717;
+
+transition:.35s;
+
+padding-top:30px;
+
+box-shadow:10px 0 30px rgba(0,0,0,.45);
+
+z-index:1000;
+
+}
+
+#menu-toggle:checked ~ .menu-lateral{
+
+left:0;
+
+}
+
+.perfil{
+
+text-align:center;
+
+margin-bottom:40px;
+
+}
+
+.perfil img{
+
+width:90px;
+
+margin-bottom:10px;
+
+}
+
+.perfil h2{
+
+color:white;
+
+font-size:22px;
+
+}
+
+.menu-lateral a{
+
+display:block;
+
+padding:18px 30px;
+
+color:white;
+
+text-decoration:none;
+
+font-size:18px;
+
+transition:.3s;
+
+}
+
+.menu-lateral a:hover{
+
+background:#c62828;
+
+padding-left:40px;
+
+}
+
+</style>
+
+</head>
+
+<body>
+    <input type="checkbox" id="menu-toggle">
+
+<label for="menu-toggle" class="hamburguesa">
+☰
+</label>
+
+<nav class="menu-lateral">
+
+<div class="perfil">
+
+<img src="img/Escudo_del_Club_Atlético_Sporting.png">
+
+<h2>SINTÉTICO SPORTING</h2>
+
+</div>
+
+<a href="index.html">🏠 Inicio</a>
+
+<a href="canchas.html">⚽ Reservar Cancha</a>
+
+<a href="mis_reservas.html">📅 Mis Reservas</a>
+
+<a href="#">👤 Mi Perfil</a>
+
+<a href="#">⚙ Configuración</a>
+
+<a href="login.html">🚪 Cerrar Sesión</a>
+
+</nav>
+
+<div class="contenedor">
+
+    <img src="img/Escudo_del_Club_Atlético_Sporting.png" class="escudo">
+
+    <h1>SPORTING CLUB</h1>
+
+    <p class="subtitulo">
+        Sistema de Reserva de Canchas
+    </p>
+
+    <div class="cancha">
+
+        <h2>⚽ CANCHA 1</h2>
+
+        <p>Césped sintético</p>
+
+        <p>8 jugadores</p>
+
+       <a href="horarios_cancha1.html">
+    <button>VER HORARIOS</button>
+</a>
+
+    </div>
+
+    <div class="cancha">
+
+    <h2>⚽ CANCHA 2</h2>
+
+    <p>Césped sintético</p>
+
+    <p>8 jugadores</p>
+
+    <a href="horarios_cancha2.html">
+        <button>VER HORARIOS</button>
+    </a>
+
+</div>
+
+</div>
+
+</body>
+
+</html>
