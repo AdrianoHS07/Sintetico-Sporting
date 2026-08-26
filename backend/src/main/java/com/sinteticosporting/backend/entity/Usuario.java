@@ -16,7 +16,7 @@ public class Usuario {
     private long idUsuario;
     private String nombre;
     private String telefono;
-    private String correoElectronico;
+    private String email;
     private String contraseña;
     private String rol;
     private String estado;
