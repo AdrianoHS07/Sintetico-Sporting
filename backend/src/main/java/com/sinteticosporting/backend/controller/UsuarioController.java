@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.sinteticosporting.backend.entity.Usuario;
 import com.sinteticosporting.backend.service.UsuarioService;
 import com.sinteticosporting.backend.dto.LoginRequest;
+import com.sinteticosporting.backend.dto.LoginResponse;
 
 @RestController
 @RequestMapping("/usuarios")
@@ -25,13 +26,11 @@ public class UsuarioController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequest loginRequest) {
+    public LoginResponse login(@RequestBody LoginRequest loginRequest) {
 
-        usuarioService.login(
+        return usuarioService.login(
             loginRequest.getEmail(),
             loginRequest.getContraseña()
         );
-
-        return "Login correcto";
     }
 }

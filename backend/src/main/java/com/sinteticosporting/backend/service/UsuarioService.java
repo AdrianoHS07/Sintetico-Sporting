@@ -3,6 +3,7 @@ package com.sinteticosporting.backend.service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.sinteticosporting.backend.dto.LoginResponse;
 import com.sinteticosporting.backend.entity.Usuario;
 import com.sinteticosporting.backend.repository.UsuarioRepository;
 
@@ -22,10 +23,13 @@ public class UsuarioService {
         }
         String contraseñaHash = passwordEncoder.encode(usuario.getContraseña());
         usuario.setContraseña(contraseñaHash);
+
+        usuario.setRol("USUARIO");
+        usuario.setEstado("ACTIVO");
         return usuarioRepository.save(usuario);
     }
 
-    public Usuario login(String email, String contraseña) {
+    public LoginResponse login(String email, String contraseña) {
 
         Usuario usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("El email no está registrado"));
@@ -34,6 +38,15 @@ public class UsuarioService {
             throw new RuntimeException("La contraseña es incorrecta");
         }
 
-        return usuario;
+        LoginResponse response = new LoginResponse();
+
+        response.setIdUsuario(usuario.getIdUsuario());
+        response.setNombre(usuario.getNombre());
+        response.setDni(usuario.getDni());
+        response.setEmail(usuario.getEmail());
+        response.setRol(usuario.getRol());
+        response.setEstado(usuario.getEstado());
+        
+        return response;
     }
 }
