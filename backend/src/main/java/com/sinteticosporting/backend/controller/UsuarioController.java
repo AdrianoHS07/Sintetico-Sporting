@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sinteticosporting.backend.entity.Usuario;
 import com.sinteticosporting.backend.service.UsuarioService;
+import com.sinteticosporting.backend.dto.LoginRequest;
 
 @RestController
 @RequestMapping("/usuarios")
@@ -21,5 +22,16 @@ public class UsuarioController {
     public Usuario registrar(@RequestBody Usuario usuario) {
 
         return usuarioService.registrarUsuario(usuario);
+    }
+
+    @PostMapping("/login")
+    public String login(@RequestBody LoginRequest loginRequest) {
+
+        usuarioService.login(
+            loginRequest.getEmail(),
+            loginRequest.getContraseña()
+        );
+
+        return "Login correcto";
     }
 }
