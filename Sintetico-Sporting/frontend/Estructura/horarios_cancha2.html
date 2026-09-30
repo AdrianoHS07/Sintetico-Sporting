@@ -2,142 +2,131 @@
 <html lang="es">
 
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Sintético Sporting</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
-      <link rel="stylesheet" href="../../css/horarios_cancha2.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-
+    <link rel="stylesheet" href="../../css/horarios_cancha2.css">
 </head>
 
 <body>
-    <input type="checkbox" id="menu-toggle">
+
+<input type="checkbox" id="menu-toggle">
 
 <label for="menu-toggle" class="hamburguesa">
-☰
+    ☰
 </label>
 
 <nav class="menu-lateral">
 
-<div class="perfil">
+    <div class="perfil">
+        <img src="../../img/Escudo_del_Club_Atlético_Sporting.png">
+        <h2>SINTÉTICO SPORTING</h2>
+    </div>
 
-<img src="../../img/Escudo_del_Club_Atlético_Sporting.png">
-
-<h2>SINTÉTICO SPORTING</h2>
-
-</div>
-
-<a href="index.html">🏠 Inicio</a>
-
-<a href="canchas.html">⚽ Reservar Cancha</a>
-
-<a href="mis_reservas.html">📅 Mis Reservas</a>
-
-<a href="#">👤 Mi Perfil</a>
-
-<a href="#">⚙ Configuración</a>
-
-<a href="login.html">🚪 Cerrar Sesión</a>
+    <a href="index.html">🏠 Inicio</a>
+    <a href="canchas.html">⚽ Reservar Cancha</a>
+    <a href="mis_reservas.html">📅 Mis Reservas</a>
+    <a href="#">👤 Mi Perfil</a>
+    <a href="#">⚙ Configuración</a>
+    <a href="login.html">🚪 Cerrar Sesión</a>
 
 </nav>
-   
+
 <div class="overlay">
- 
-<div class="contenedor">
-<div class="cabecera">
 
-    <img src="../../img/Escudo_del_Club_Atlético_Sporting.png" class="escudo">
+    <div class="contenedor">
 
-    <h1>SINTÉTICO SPORTING</h1>
+        <div class="cabecera">
 
-    <p class="subtitulo">
-        Sistema Oficial de Reservas
-    </p>
+            <img src="../../img/Escudo_del_Club_Atlético_Sporting.png" class="escudo">
 
-</div>
-    <div class="panel">
+            <h1>SINTÉTICO SPORTING</h1>
 
-        <h2>⚽ CANCHA 1</h2>
-
-        <p class="descripcion">
-            Césped Sintético • 8 jugadores
-        </p>
-
-        <div class="fecha">
-
-            <label>📅 Seleccioná una fecha</label>
-
-            <input type="date">
+            <p class="subtitulo">
+                Sistema Oficial de Reservas
+            </p>
 
         </div>
 
-        <div class="horario">
+        <div class="panel">
 
-            <div class="info">
+            <h2>⚽ CANCHA 2</h2>
 
-                <h3>20:00 - 21:00</h3>
+            <p class="descripcion">
+                Césped Sintético • 8 jugadores
+            </p>
 
-                <p class="disponible">🟢 Disponible</p>
+            <div class="fecha">
+
+                <label>📅 Seleccioná una fecha</label>
+
+                <input type="date" id="fecha-reserva">
 
             </div>
 
-            <button>RESERVAR</button>
+            <div class="horario">
 
-        </div>
+                <div class="info">
+                    <h3>20:00 - 21:00</h3>
+                    <p class="disponible">🟢 Disponible</p>
+                </div>
 
-        <div class="horario">
-
-            <div class="info">
-
-                <h3>21:00 - 22:00</h3>
-
-                <p class="disponible">🟢 Disponible</p>
-
-            </div>
-
-            <button>RESERVAR</button>
-
-        </div>
-
-        <div class="horario">
-
-            <div class="info">
-
-                <h3>22:00 - 23:00</h3>
-
-                <p class="reservado">🔴 Reservado</p>
+                <button type="button" class="btn-reservar">
+                    RESERVAR
+                </button>
 
             </div>
 
-            <button disabled>OCUPADO</button>
+            <div class="horario">
 
-        </div>
+                <div class="info">
+                    <h3>21:00 - 22:00</h3>
+                    <p class="disponible">🟢 Disponible</p>
+                </div>
 
-        <div class="horario">
-
-            <div class="info">
-
-                <h3>23:00 - 00:00</h3>
-
-                <p class="disponible">🟢 Disponible</p>
+                <button type="button" class="btn-reservar">
+                    RESERVAR
+                </button>
 
             </div>
 
-            <button>RESERVAR</button>
+            <div class="horario">
 
-        </div>
+                <div class="info">
+                    <h3>22:00 - 23:00</h3>
+                    <p class="reservado">🔴 Reservado</p>
+                </div>
 
-        <div class="volver">
+                <button type="button" disabled>
+                    OCUPADO
+                </button>
 
-            <a href="canchas.html">← Volver a las canchas</a>
+            </div>
+
+            <div class="horario">
+
+                <div class="info">
+                    <h3>23:00 - 00:00</h3>
+                    <p class="disponible">🟢 Disponible</p>
+                </div>
+
+                <button type="button" class="btn-reservar">
+                    RESERVAR
+                </button>
+
+            </div>
+
+            <p id="error-fecha"></p>
+
+            <div class="volver">
+                <a href="canchas.html">← Volver a las canchas</a>
+            </div>
 
         </div>
 
@@ -145,7 +134,7 @@
 
 </div>
 
-</div>
+<script src="../../js/horarios_cancha2.js"></script>
 
 </body>
 

@@ -2,16 +2,12 @@
 <html lang="es">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta charset="UTF-8">
+    <link rel="stylesheet" href="../../css/mis_reservas.css">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="../../css/mis_reservas.css">
-
-<title>Mis Reservas</title>
-
-
-
+    <title>Mis Reservas</title>
 </head>
 
 <body>
@@ -20,47 +16,83 @@
 
 <div class="overlay">
 
-<div class="contenedor">
+    <div class="contenedor">
 
-<img src="../../img/Escudo_del_Club_Atlético_Sporting.png" class="escudo">
+        <img src="../../img/Escudo_del_Club_Atlético_Sporting.png" class="escudo">
 
-<h1>Mis Reservas</h1>
+        <h1>Mis Reservas</h1>
 
-<div class="panel">
+        <div class="panel">
 
-<div class="reserva">
+            <div class="reserva"
+                 data-cancha="Cancha 1"
+                 data-fecha="21/07/2026"
+                 data-horario="20:00 - 21:00">
 
-<h2>⚽ Cancha 1</h2>
+                <h2>⚽ Cancha 1</h2>
 
-<p>📅 21/07/2026</p>
+                <p>📅 21/07/2026</p>
 
-<p>🕒 20:00 - 21:00</p>
+                <p>🕒 20:00 - 21:00</p>
 
-<p class="estado">🟢 Confirmada</p>
+                <p class="estado">
+                    🟢 Confirmada
+                </p>
 
-<button>VER DETALLE</button>
+                <button type="button" class="btn-detalle">
+                    VER DETALLE
+                </button>
+
+                <div class="detalle oculto">
+
+                    <p>⚽ Césped sintético</p>
+                    <p>👥 8 jugadores</p>
+                    <p>💳 Pago confirmado</p>
+
+                </div>
+
+            </div>
+
+            <div class="reserva"
+                 data-cancha="Cancha 2"
+                 data-fecha="25/07/2026"
+                 data-horario="21:00 - 22:00">
+
+                <h2>⚽ Cancha 2</h2>
+
+                <p>📅 25/07/2026</p>
+
+                <p>🕒 21:00 - 22:00</p>
+
+                <p class="pendiente">
+                    🟡 Pendiente de Pago
+                </p>
+
+                <button type="button" class="btn-pagar">
+                    PAGAR
+                </button>
+
+                <button type="button" class="btn-detalle">
+                    VER DETALLE
+                </button>
+
+                <div class="detalle oculto">
+
+                    <p>⚽ Césped sintético</p>
+                    <p>👥 8 jugadores</p>
+                    <p>💳 Pago pendiente</p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
 
 </div>
 
-<div class="reserva">
-
-<h2>⚽ Cancha 2</h2>
-
-<p>📅 25/07/2026</p>
-
-<p>🕒 21:00 - 22:00</p>
-
-<p class="pendiente">🟡 Pendiente de Pago</p>
-
-<button>PAGAR</button>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
+<script src="../../js/mis_reservas.js"></script>
 
 </body>
 
