@@ -4,118 +4,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>⚽ Turnos Fútbol</title>
 
-    <style>
-
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-            font-family:Arial, sans-serif;
-        }
-
-        body{
-            background-image:url("img/canchaaaaa.png");
-            background-size:cover;
-            background-position:center;
-            background-repeat:no-repeat;
-
-            height:100vh;
-
-            display:flex;
-            justify-content:center;
-            align-items:center;
-        }
-
-        .login{
-            background:rgba(0,0,0,0.8);
-            color:white;
-
-            width:400px;
-            padding:30px;
-
-            border-radius:15px;
-
-            text-align:center;
-        }
-
-        .escudo{
-            width:120px;
-            margin-bottom:15px;
-        }
-
-        h1{
-            margin-bottom:10px;
-        }
-
-        p{
-            margin-bottom:15px;
-        }
-
-        input{
-            width:100%;
-            padding:10px;
-            margin-top:5px;
-            margin-bottom:15px;
-
-            border:none;
-            border-radius:5px;
-        }
-
-        button{
-            width:100%;
-            padding:12px;
-
-            background:#d32f2f;
-            color:white;
-
-            border:none;
-            border-radius:5px;
-
-            cursor:pointer;
-            margin-top:10px;
-        }
-
-        button:hover{
-            background:#b71c1c;
-        }
-
-    </style>
-
+    <link rel="stylesheet" href="../css/login.css">
 </head>
 
 <body>
 
     <div class="login">
 
-        <img src="img/Escudo_del_Club_Atlético_Sporting.png" class="escudo">
+        <img src="../img/Escudo_del_Club_Atlético_Sporting.png" class="escudo">
 
-        <h1>   SINTETICO SPORTING </h1>
+        <h1>SINTETICO SPORTING</h1>
 
         <p>Reservá tu cancha de manera rápida y sencilla</p>
 
-        <label>Email</label>
-        <br>
-        <input type="email" placeholder="Ingrese su email">
+        <form id="formLogin">
 
-        <label>Contraseña</label>
-        <br>
-        <input type="password" placeholder="Ingrese su contraseña">
+            <label>Email</label>
+            <br>
+            <input 
+                type="email" 
+                id="email" 
+                placeholder="Ingrese su email"
+            >
 
-        <a href="canchas.html">
-            <button>INICIAR SESIÓN</button>
-        </a>
+            <label>Contraseña</label>
+            <br>
+            <input 
+                type="password" 
+                id="password" 
+                placeholder="Ingrese su contraseña"
+            >
+
+            <button type="submit">INICIAR SESIÓN</button>
+
+            <p id="mensajeError"></p>
+
+        </form>
 
         <br><br>
 
         <p>¿No tenés cuenta?</p>
 
         <a href="registro.html">
-            <button>REGISTRATE</button>
+            <button type="button">REGISTRATE</button>
         </a>
 
     </div>
+
+    <script src="../js/login.js"></script>
 
 </body>
 

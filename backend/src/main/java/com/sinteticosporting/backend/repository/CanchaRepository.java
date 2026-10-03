@@ -1,5 +1,9 @@
 package com.sinteticosporting.backend.repository;
 
-public class CanchaRepository {
-    
+import com.sinteticosporting.backend.entity.Cancha;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface CanchaRepository extends JpaRepository<Cancha, Long> {
 }
