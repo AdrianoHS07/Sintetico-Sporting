@@ -14,6 +14,7 @@ public class Cancha {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idCancha;
+    
     private int numero;
     private String descripcion;
     private double valorPorHora;
