@@ -1,440 +1,408 @@
-        *{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Poppins',sans-serif;
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
 }
 
-body{
-
-background:url("../img/CANCHOTAAAAA.png");
-
-background-size:cover;
-
-background-position:center;
-
-background-repeat:no-repeat;
-
-min-height:100vh;
-
+body {
+    min-height: 100vh;
+    background: url("../img/CANCHOTAAAAA.png") center/cover no-repeat fixed;
+    color: white;
 }
 
-.overlay{
-
-width:100%;
-
-min-height:100vh;
-
-background:rgba(0,0,0,.65);
-
-display:flex;
-
-justify-content:center;
-
-align-items:center;
-
+.overlay {
+    min-height: 100vh;
+    width: 100%;
+    background: linear-gradient(
+        rgba(0, 0, 0, 0.78),
+        rgba(0, 0, 0, 0.88)
+    );
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 50px 20px;
 }
 
-.contenedor{
-
-width:100%;
-
-max-width:600px;
-
-text-align:center;
-
+.contenedor {
+    width: 100%;
+    max-width: 560px;
+    text-align: center;
 }
 
-.escudo{
+/* ESCUDO Y TITULO */
 
-width:90px;
-
-margin:auto;
-
-display:block;
-
-margin-bottom:15px;
-
+.escudo {
+    display: block;
+    width: 105px;
+    margin: 0 auto 15px;
+    filter: drop-shadow(0 5px 15px rgba(0,0,0,.65));
 }
 
-h1{
-
-color:white;
-
-font-size:42px;
-
-margin-bottom:8px;
-
+h1 {
+    color: #fff;
+    font-size: 35px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+    text-shadow: 0 4px 15px rgba(0,0,0,.6);
 }
 
-.subtitulo{
-
-color:#ddd;
-
-margin-bottom:30px;
-
+.subtitulo {
+    color: #f2b6b6;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    margin-bottom: 28px;
 }
 
-.panel{
+/* PANEL PRINCIPAL */
 
-background:rgba(20,20,20,.82);
-
-padding:35px;
-
-border-radius:20px;
-
-box-shadow:0 10px 35px rgba(0,0,0,.45);
-
+.panel {
+    background: rgba(17, 17, 19, 0.96);
+    padding: 32px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,.12);
+    border-top: 4px solid #d32f2f;
+    box-shadow: 0 18px 50px rgba(0,0,0,.7);
 }
 
-.panel h2{
-
-color:white;
-
-margin-bottom:25px;
-
+.encabezado-panel {
+    margin-bottom: 25px;
 }
 
-.dato{
-
-background:rgba(255,255,255,.08);
-
-padding:15px;
-
-border-radius:12px;
-
-margin-bottom:18px;
-
-text-align:left;
-
+.etiqueta {
+    display: inline-block;
+    background: rgba(198,40,40,.18);
+    border: 1px solid rgba(198,40,40,.4);
+    color: #ff8585;
+    border-radius: 20px;
+    padding: 7px 14px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    margin-bottom: 15px;
 }
 
-.dato h3{
-
-color:#ffffff;
-
-margin-bottom:8px;
-
+.panel h2 {
+    color: white;
+    font-size: 25px;
+    font-weight: 800;
+    margin-bottom: 8px;
 }
 
-.dato p{
-
-color:#d8d8d8;
-
+.descripcion {
+    color: #aaa;
+    font-size: 13px;
 }
 
-.botones{
+/* DATOS DE LA RESERVA */
 
-margin-top:30px;
-
-display:flex;
-
-justify-content:space-between;
-
+.dato {
+    background: rgba(255,255,255,.055);
+    border: 1px solid rgba(255,255,255,.08);
+    border-left: 4px solid #d32f2f;
+    border-radius: 12px;
+    padding: 17px 20px;
+    margin-bottom: 13px;
+    text-align: left;
+    transition: background .3s;
 }
 
-button{
-
-padding:12px 22px;
-
-border:none;
-
-border-radius:10px;
-
-cursor:pointer;
-
-font-weight:bold;
-
-transition:.3s;
-
+.dato:hover {
+    background: rgba(255,255,255,.09);
 }
 
-.confirmar{
-
-background:#c62828;
-
-color:white;
-
+.dato h3 {
+    color: #ff8b8b;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 7px;
 }
 
-.confirmar:hover{
-
-background:#e53935;
-
-transform:scale(1.05);
-
+.dato p {
+    color: #fff;
+    font-size: 17px;
+    font-weight: 600;
 }
 
-.cancelar{
+/* SECCION DE PAGO */
 
-background:#555;
-
-color:white;
-
+.titulo-pago {
+    margin-top: 30px;
+    padding-top: 25px;
+    border-top: 1px solid rgba(255,255,255,.12);
 }
 
-.cancelar:hover{
-
-background:#777;
-
-}
-.precio{
-
-margin:25px 0;
-
-padding:20px;
-
-background:rgba(255,255,255,.08);
-
-border-radius:15px;
-
+.titulo-pago h3 {
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: #fff;
 }
 
-.precio h2{
-
-color:#00C851;
-
-font-size:42px;
-
-margin-bottom:5px;
-
+.titulo-pago p {
+    color: #aaa;
+    font-size: 12px;
+    margin-top: 7px;
 }
 
-.precio p{
-
-color:#d9d9d9;
-
+.botones {
+    margin-top: 22px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
 }
 
-.mercadopago{
-
-background:#009EE3;
-
-width:100%;
-
-padding:15px;
-
-font-size:18px;
-
+.botones a {
+    display: block;
+    width: 100%;
+    text-decoration: none;
 }
 
-.mercadopago:hover{
-
-background:#0084C2;
-
+button {
+    display: block;
+    width: 100%;
+    border: none;
+    border-radius: 12px;
+    padding: 17px;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: background .3s, transform .3s, box-shadow .3s;
 }
 
-.cancelar{
+/* MERCADO PAGO */
 
-background:#555;
-
-width:100%;
-
-padding:15px;
-
-}
-.volver{
-
-position:fixed;
-
-top:25px;
-
-left:25px;
-
-width:50px;
-
-height:50px;
-
-background:rgba(20,20,20,.85);
-
-color:white;
-
-border-radius:50%;
-
-display:flex;
-
-justify-content:center;
-
-align-items:center;
-
-text-decoration:none;
-
-font-size:28px;
-
-font-weight:bold;
-
-transition:.3s;
-
-box-shadow:0 5px 15px rgba(0,0,0,.4);
-
+.mercadopago {
+    background: #299bd6;
+    color: white;
+    box-shadow: 0 5px 18px rgba(41,155,214,.18);
 }
 
-.volver:hover{
-
-background:#c62828;
-
-transform:scale(1.1);
-
-}
-.transferencia{
-
-background:#00a651;
-
-width:100%;
-
-padding:15px;
-
-font-size:18px;
-
-color:white;
-
-margin-top:10px;
-
+.mercadopago:hover {
+    background: #1686c0;
+    transform: translateY(-2px);
 }
 
-.transferencia:hover{
+/* PELOTA SEPARADORA */
 
-background:#008c46;
-
+.separador {
+    margin: 0;
+    color: white;
+    text-align: center;
+    font-size: 38px;
+    line-height: 1.2;
+    transform: none;
 }
 
-.separador{
+/* TRANSFERENCIA */
 
-margin:20px 0;
-
-color:white;
-
-font-weight:bold;
-
-}
-/* ---------------------- */
-/* MENÚ HAMBURGUESA */
-/* ---------------------- */
-
-#menu-toggle{
-
-display:none;
-
+.transferencia {
+    background: #009e53;
+    color: white;
+    margin-top: 0;
+    box-shadow: 0 5px 18px rgba(0,158,83,.18);
 }
 
-.hamburguesa{
-
-position:fixed;
-
-top:25px;
-
-left:25px;
-
-width:55px;
-
-height:55px;
-
-background:#c62828;
-
-color:white;
-
-font-size:30px;
-
-display:flex;
-
-justify-content:center;
-
-align-items:center;
-
-border-radius:12px;
-
-cursor:pointer;
-
-z-index:1001;
-
-transition:.3s;
-
-box-shadow:0 5px 20px rgba(0,0,0,.35);
-
+.transferencia:hover {
+    background: #008044;
+    transform: translateY(-2px);
 }
 
-.hamburguesa:hover{
+/* CANCELAR */
 
-background:#e53935;
-
-transform:scale(1.08);
-
+.enlace-cancelar {
+    margin-top: 15px;
 }
 
-.menu-lateral{
-
-position:fixed;
-
-top:0;
-
-left:-300px;
-
-width:280px;
-
-height:100%;
-
-background:#171717;
-
-transition:.35s;
-
-padding-top:30px;
-
-box-shadow:10px 0 30px rgba(0,0,0,.45);
-
-z-index:1000;
-
+.cancelar {
+    background: #353538;
+    color: #ddd;
+    border: 1px solid rgba(255,255,255,.15);
+    transform: none;
 }
 
-#menu-toggle:checked ~ .menu-lateral{
-
-left:0;
-
+.cancelar:hover {
+    background: #4b4b4f;
+    color: white;
 }
 
-.perfil{
+/* PIE DE PAGINA */
 
-text-align:center;
-
-margin-bottom:40px;
-
+.pie-pagina {
+    color: #999;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    margin-top: 25px;
 }
 
-.perfil img{
+/* VOLVER */
 
-width:90px;
-
-margin-bottom:10px;
-
+.volver {
+    position: fixed;
+    top: 25px;
+    left: 95px;
+    width: 50px;
+    height: 50px;
+    background: rgba(20,20,20,.9);
+    color: white;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    font-size: 28px;
+    font-weight: bold;
+    transition: .3s;
+    box-shadow: 0 5px 15px rgba(0,0,0,.4);
+    z-index: 900;
 }
 
-.perfil h2{
-
-color:white;
-
-font-size:22px;
-
+.volver:hover {
+    background: #c62828;
+    transform: scale(1.05);
 }
 
-.menu-lateral a{
+/* MENU HAMBURGUESA */
 
-display:block;
-
-padding:18px 30px;
-
-color:white;
-
-text-decoration:none;
-
-font-size:18px;
-
-transition:.3s;
-
+#menu-toggle {
+    display: none;
 }
 
-.menu-lateral a:hover{
+.hamburguesa {
+    position: fixed;
+    top: 25px;
+    left: 25px;
+    width: 55px;
+    height: 55px;
+    background: #c62828;
+    color: white;
+    font-size: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 12px;
+    cursor: pointer;
+    z-index: 1001;
+    transition: .3s;
+    box-shadow: 0 5px 20px rgba(0,0,0,.35);
+}
 
-background:#c62828;
+.hamburguesa:hover {
+    background: #e53935;
+    transform: scale(1.08);
+}
 
-padding-left:40px;
+.menu-lateral {
+    position: fixed;
+    top: 0;
+    left: -300px;
+    width: 280px;
+    height: 100%;
+    background: #171717;
+    transition: .35s;
+    padding-top: 30px;
+    box-shadow: 10px 0 30px rgba(0,0,0,.45);
+    z-index: 1000;
+}
 
+#menu-toggle:checked ~ .menu-lateral {
+    left: 0;
+}
+
+.perfil {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.perfil img {
+    width: 90px;
+    margin-bottom: 10px;
+}
+
+.perfil h2 {
+    color: white;
+    font-size: 22px;
+}
+
+.menu-lateral a {
+    display: block;
+    padding: 18px 30px;
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    transition: .3s;
+}
+
+.menu-lateral a:hover {
+    background: #c62828;
+    padding-left: 40px;
+}
+
+/* ADAPTACION A CELULARES */
+
+@media (max-width: 600px) {
+
+    .overlay {
+        padding: 100px 15px 35px;
+    }
+
+    .contenedor {
+        max-width: 100%;
+    }
+
+    .escudo {
+        width: 85px;
+    }
+
+    h1 {
+        font-size: 27px;
+    }
+
+    .subtitulo {
+        font-size: 11px;
+        letter-spacing: 2px;
+    }
+
+    .panel {
+        padding: 25px 18px;
+        border-radius: 16px;
+    }
+
+    .panel h2 {
+        font-size: 22px;
+    }
+
+    .dato {
+        padding: 15px;
+    }
+
+    .dato p {
+        font-size: 15px;
+    }
+
+    button {
+        font-size: 14px;
+        padding: 16px 12px;
+    }
+
+    .hamburguesa {
+        top: 15px;
+        left: 15px;
+        width: 45px;
+        height: 45px;
+    }
+
+    .volver {
+        top: 15px;
+        left: 70px;
+        width: 45px;
+        height: 45px;
+    }
 }

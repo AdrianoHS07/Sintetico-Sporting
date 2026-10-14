@@ -1,84 +1,189 @@
+
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Transferencia Bancaria</title>
-
+    <title>Transferencia Bancaria | Sintético Sporting</title>
     <link rel="stylesheet" href="../css/transferencia.css">
+    <script src="../js/transferencia.js" defer></script>
 </head>
-
 <body>
 
-<input type="checkbox" id="menu-toggle">
+    <input type="checkbox" id="menu-toggle">
+    <label for="menu-toggle" class="hamburguesa" aria-label="Abrir menú">☰</label>
 
-<label for="menu-toggle" class="hamburguesa">
-    ☰
-</label>
+    <a href="confirmar.html" class="boton-volver">← Volver</a>
 
-<nav class="menu-lateral">
-
-    <div class="perfil">
-        <img src="../img/Escudo_del_Club_Atlético_Sporting.png">
-        <h2>SINTÉTICO SPORTING</h2>
-    </div>
-
-    <a href="index.html">🏠 Inicio</a>
-    <a href="canchas.html">⚽ Reservar Cancha</a>
-    <a href="mis_reservas.html">📅 Mis Reservas</a>
-    <a href="#">👤 Mi Perfil</a>
-    <a href="#">⚙ Configuración</a>
-    <a href="login.html">🚪 Cerrar Sesión</a>
-
-</nav>
-
-<div class="overlay">
-
-    <div class="contenedor">
-
-        <img src="../img/Escudo_del_Club_Atlético_Sporting.png" class="escudo">
-
-        <div class="panel">
-
-            <h1>🏦 Transferencia Bancaria</h1>
-
-            <div class="precio">
-                $20.000
-            </div>
-
-            <div class="dato">
-                <h3>Alias</h3>
-                <p>SPORTING.CANCHAS</p>
-            </div>
-
-            <div class="dato">
-                <h3>CBU</h3>
-                <p>0000003100000000000000</p>
-            </div>
-
-            <div class="dato">
-                <h3>Titular</h3>
-                <p>Club Atlético Sporting</p>
-            </div>
-
-            <img src="../../img/qr.jpeg" class="qr">
-
-            <a href="reserva_exitosa.html">
-                <button type="button">
-                    ✔ YA REALICÉ LA TRANSFERENCIA
-                </button>
-            </a>
-
+    <nav class="menu-lateral">
+        <div class="perfil">
+            <img src="../img/Escudo_del_Club_Atlético_Sporting.png" alt="Escudo Sporting">
+            <h2>SINTÉTICO SPORTING</h2>
         </div>
 
+        <a href="index.html">🏠 Inicio</a>
+        <a href="canchas.html">⚽ Reservar Cancha</a>
+        <a href="mis_reservas.html">📅 Mis Reservas</a>
+        <a href="login.html">🚪 Cerrar Sesión</a>
+    </nav>
+
+    <div class="overlay">
+        <main class="contenedor">
+
+            <img src="../img/Escudo_del_Club_Atlético_Sporting.png"
+                 class="escudo"
+                 alt="Club Atlético Sporting">
+
+            <section class="panel" id="panel-transferencia">
+                <div class="icono-principal">🏦</div>
+
+                <h1>Transferencia bancaria</h1>
+                <p class="subtitulo">
+                    Revisá tu reserva y transferí al siguiente destino.
+                </p>
+
+                <div class="resumen">
+                    <h2>⚽ TU RESERVA</h2>
+
+                    <div class="fila">
+                        <span>Cancha</span>
+                        <strong id="cancha-reserva">-</strong>
+                    </div>
+
+                    <div class="fila">
+                        <span>Fecha</span>
+                        <strong id="fecha-reserva">-</strong>
+                    </div>
+
+                    <div class="fila">
+                        <span>Horario</span>
+                        <strong id="horario-reserva">-</strong>
+                    </div>
+                </div>
+
+                <div class="precio">
+                    <small>IMPORTE A TRANSFERIR</small>
+                    <strong id="precio-reserva">$20.000</strong>
+                </div>
+
+                <div class="datos-bancarios">
+                    <h2>DATOS BANCARIOS</h2>
+
+                    <div class="dato">
+                        <h3>Alias</h3>
+                        <div class="dato-copiable">
+                            <p id="alias-bancario">SPORTING.CANCHAS</p>
+                            <button type="button"
+                                    class="btn-copiar"
+                                    data-copiar="alias-bancario">
+                                Copiar
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="dato">
+                        <h3>CBU</h3>
+                        <div class="dato-copiable">
+                            <p id="cbu-bancario">0000003100000000000000</p>
+                            <button type="button"
+                                    class="btn-copiar"
+                                    data-copiar="cbu-bancario">
+                                Copiar
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="dato">
+                        <h3>Titular</h3>
+                        <p>Club Atlético Sporting</p>
+                    </div>
+                </div>
+
+                <div class="qr-contenedor">
+                    <p>También podés utilizar este QR</p>
+                    <img src="../img/qr.jpeg"
+                         class="qr"
+                         alt="Código QR para transferencia bancaria">
+                </div>
+
+                <div class="aviso">
+                    <strong>Importante</strong>
+                    <p>
+                        Informar que realizaste una transferencia
+                        no significa que el pago esté confirmado.
+                        El administrador deberá verificarlo.
+                    </p>
+                </div>
+
+                <button type="button"
+                        id="btn-transferencia"
+                        class="btn-principal">
+                    ✔ YA REALICÉ LA TRANSFERENCIA
+                </button>
+
+                <p id="mensaje-error" class="mensaje-error" hidden></p>
+            </section>
+
+            <section class="panel panel-resultado"
+                     id="panel-pendiente"
+                     hidden
+                     aria-live="polite">
+
+                <div class="icono-pendiente">⏳</div>
+
+                <h1>Transferencia pendiente</h1>
+
+                <p class="subtitulo">
+                    Registramos tu aviso de transferencia
+                    en esta demostración.
+                </p>
+
+                <div class="estado-pendiente">
+                    PENDIENTE DE VERIFICACIÓN
+                </div>
+
+                <p class="explicacion">
+                    El administrador deberá comprobar que el pago
+                    haya ingresado antes de confirmar tu reserva.
+                </p>
+
+                <div class="resumen">
+                    <div class="fila">
+                        <span>Cancha</span>
+                        <strong id="resultado-cancha">-</strong>
+                    </div>
+
+                    <div class="fila">
+                        <span>Fecha</span>
+                        <strong id="resultado-fecha">-</strong>
+                    </div>
+
+                    <div class="fila">
+                        <span>Horario</span>
+                        <strong id="resultado-horario">-</strong>
+                    </div>
+                </div>
+
+                <a href="mis_reservas.html" class="btn-principal enlace-boton">
+                    📅 VER MIS RESERVAS
+                </a>
+
+                <a href="index.html" class="enlace-inicio">
+                    Volver al inicio
+                </a>
+
+                <p class="nota-demo">
+                    Modo demostración: el aviso todavía no se envía
+                    al administrador ni a MySQL.
+                </p>
+            </section>
+
+            <p class="pie-pagina">
+                CLUB ATLÉTICO SPORTING · RESERVAS ONLINE
+            </p>
+
+        </main>
     </div>
 
-</div>
-
-<script src="../js/transferencia.js"></script>
-
 </body>
-
 </html>

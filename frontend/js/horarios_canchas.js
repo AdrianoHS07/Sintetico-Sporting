@@ -19,16 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
         inputFecha.value = hoy;
     }
 
-    // 4. Lógica para cerrar menú hamburguesa al hacer clic afuera
-    document.addEventListener("click", function (evento) {
-        if (!checkbox || !checkbox.checked) return;
-        const clickDentroDelMenu = menu.contains(evento.target);
-        const clickEnElBoton = botonMenu.contains(evento.target);
 
-        if (!clickDentroDelMenu && !clickEnElBoton) {
-            checkbox.checked = false;
-        }
-    });
 
     // 5. Marcar opción activa en el menú
     const paginaActual = window.location.pathname.split("/").pop();

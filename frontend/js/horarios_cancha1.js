@@ -13,21 +13,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     inputFecha.min = fechaMinima;
 
-    document.addEventListener("click", function (evento) {
-
-        if (!checkbox.checked) {
-            return;
-        }
-
-        const clickDentroDelMenu = menu.contains(evento.target);
-        const clickEnElBoton = botonMenu.contains(evento.target);
-
-        if (!clickDentroDelMenu && !clickEnElBoton) {
-            checkbox.checked = false;
-        }
-
-    });
-
     const paginaActual = window.location.pathname.split("/").pop();
     const links = document.querySelectorAll(".menu-lateral a");
 
