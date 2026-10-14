@@ -1,61 +1,126 @@
-const formulario = document.getElementById("formLogin");
-const emailInput = document.getElementById("email");
-const passwordInput = document.getElementById("password");
-const mensajeError = document.getElementById("mensajeError");
 
-formulario.addEventListener("submit", async function (event) {
-    event.preventDefault();
+document.addEventListener("DOMContentLoaded", function () {
 
-    mensajeError.textContent = "";
-    mensajeError.style.color = "red";
+    const formulario = document.getElementById("formLogin");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const mensajeError = document.getElementById("mensajeError");
+    const botonLogin = formulario.querySelector('button[type="submit"]');
 
-    const email = emailInput.value.trim();
-    const password = passwordInput.value.trim();
+    formulario.addEventListener("submit", async function (event) {
+        event.preventDefault();
 
-    if (email === "" || password === "") {
-        mensajeError.textContent = "Completá todos los campos";
-        return;
-    }
+        mensajeError.textContent = "";
+        mensajeError.className = "";
 
-    if (!email.includes("@")) {
-        mensajeError.textContent = "Ingresá un email válido";
-        return;
-    }
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
 
-    // Coincide con LoginRequest.java (email y contraseña)
-    const datosLogin = {
-        email: email,
-        contraseña: password
-    };
+        if (!email || !password) {
+            mostrarMensaje("Completá todos los campos.", "error");
+            return;
+        }
 
-    try {
-        const respuesta = await fetch("http://localhost:8080/usuarios/login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(datosLogin)
-        });
+        if (!emailInput.checkValidity()) {
+            mostrarMensaje("Ingresá un email válido.", "error");
+            return;
+        }
 
-        if (respuesta.ok) {
-            // Convierte el JSON devuelto por LoginResponse.java a objeto JS
+        const datosLogin = {
+            email: email,
+            contraseña: password
+        };
+
+        botonLogin.disabled = true;
+        botonLogin.textContent = "INICIANDO SESIÓN...";
+
+        try {
+            const respuesta = await fetch(
+                "http://localhost:8080/usuarios/login",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(datosLogin)
+                }
+            );
+
+            if (!respuesta.ok) {
+                if (respuesta.status === 401 || respuesta.status === 403) {
+                    mostrarMensaje(
+                        "Email o contraseña incorrectos.",
+                        "error"
+                    );
+                } else {
+                    mostrarMensaje(
+                        "No se pudo iniciar sesión. Intentá nuevamente.",
+                        "error"
+                    );
+                }
+                return;
+            }
+
             const data = await respuesta.json();
 
-            // Guardamos idUsuario, nombre, rol, etc., para usarlos en canchas.html
+            // Debe coincidir con LoginResponse.java.
+            // Aceptamos temporalmente algunas variantes de formato.
+            const rolOriginal =
+                typeof data.rol === "string"
+                    ? data.rol
+                    : data.rol?.nombre ||
+                      data.rol?.nombreRol ||
+                      data.rol?.rol ||
+                      data.role ||
+                      "";
+
+            const rol = String(rolOriginal)
+                .toUpperCase()
+                .replace(/^ROLE_/, "");
+
+            if (rol !== "ADMIN" && rol !== "CLIENTE") {
+                mostrarMensaje(
+                    "El servidor inició sesión, pero no devolvió " +
+                    "un rol reconocido. Revisá LoginResponse.java.",
+                    "error"
+                );
+                console.warn("Formato de rol no reconocido:", data.rol);
+                return;
+            }
+
+            // Datos para personalizar la interfaz.
+            // NO deben utilizarse como autorización de seguridad.
             localStorage.setItem("usuario", JSON.stringify(data));
 
-            mensajeError.style.color = "green";
-            mensajeError.textContent = "¡Inicio de sesión exitoso!";
+            mostrarMensaje(
+                "¡Inicio de sesión exitoso!",
+                "exito"
+            );
 
-            setTimeout(() => {
+            if (rol === "ADMIN") {
+                window.location.href = "admin.html";
+            } else {
                 window.location.href = "canchas.html";
-            }, 1000);
+            }
 
-        } else {
-            mensajeError.textContent = "Email o contraseña incorrectos.";
+        } catch (error) {
+            console.error("Error al iniciar sesión:", error);
+
+            mostrarMensaje(
+                "No se pudo conectar con el servidor. " +
+                "Comprobá que Spring Boot esté funcionando.",
+                "error"
+            );
+
+        } finally {
+            botonLogin.disabled = false;
+            botonLogin.textContent = "INICIAR SESIÓN";
         }
-    } catch (error) {
-        console.error("Error de red o servidor:", error);
-        mensajeError.textContent = "No se pudo conectar con el servidor.";
+    });
+
+    function mostrarMensaje(texto, tipo) {
+        mensajeError.textContent = texto;
+        mensajeError.className = tipo;
     }
+
 });

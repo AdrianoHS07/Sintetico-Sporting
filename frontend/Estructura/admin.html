@@ -1,0 +1,171 @@
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Administración | Sintético Sporting</title>
+
+    <link rel="stylesheet" href="../css/admin.css">
+    <script src="../js/admin.js" defer></script>
+</head>
+
+<body>
+
+    <aside class="menu-admin">
+        <h2>⚽ SPORTING ADMIN</h2>
+
+        <nav>
+            <a href="#inicio">🏠 Inicio</a>
+            <a href="#reservas">📅 Reservas</a>
+            <a href="#reservas">💳 Pagos</a>
+            <a href="login.html">🚪 Volver al login</a>
+        </nav>
+    </aside>
+
+    <main class="contenido-admin">
+
+        <header id="inicio" class="encabezado-principal">
+            <div>
+                <h1>Panel de administración</h1>
+                <p>Gestión de reservas y pagos</p>
+            </div>
+
+            <span class="etiqueta-demo">Modo demostración</span>
+        </header>
+
+        <section class="estadisticas">
+
+            <div class="tarjeta">
+                <h3>Reservas totales</h3>
+                <p id="total-reservas">0</p>
+            </div>
+
+            <div class="tarjeta">
+                <h3>Pagos pendientes</h3>
+                <p id="pagos-pendientes">0</p>
+            </div>
+
+            <div class="tarjeta">
+                <h3>Reservas confirmadas</h3>
+                <p id="reservas-confirmadas">0</p>
+            </div>
+
+        </section>
+
+        <section id="reservas" class="seccion-reservas">
+
+            <div class="encabezado-reservas">
+                <h2>Reservas de canchas</h2>
+
+                <button type="button" id="btn-nueva-reserva">
+                    + Nueva reserva
+                </button>
+            </div>
+
+            <div class="herramientas">
+
+                <input
+                    type="search"
+                    id="buscar-reserva"
+                    placeholder="Buscar por nombre y apellido..."
+                    aria-label="Buscar reservas"
+                >
+
+                <select id="filtro-estado" aria-label="Filtrar reservas">
+                    <option value="Todas">Todas las reservas</option>
+                    <option value="Pendiente">Pendientes</option>
+                    <option value="Confirmado">Confirmadas</option>
+                    <option value="Cancelado">Canceladas</option>
+                </select>
+
+            </div>
+
+            <div class="tabla-contenedor">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nombre y apellido</th>
+                            <th>Cancha</th>
+                            <th>Fecha</th>
+                            <th>Horario</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="tabla-reservas"></tbody>
+                </table>
+            </div>
+
+            <p id="sin-resultados" class="sin-resultados" hidden>
+                No se encontraron reservas.
+            </p>
+
+        </section>
+
+    </main>
+
+    <!-- VENTANA NUEVA RESERVA -->
+
+    <div class="modal" id="modal-reserva" aria-hidden="true">
+
+        <div class="modal-contenido" role="dialog"
+             aria-modal="true" aria-labelledby="titulo-modal">
+
+            <div class="modal-encabezado">
+                <h2 id="titulo-modal">Nueva reserva</h2>
+
+                <button type="button" id="cerrar-modal"
+                        aria-label="Cerrar ventana">
+                    ✕
+                </button>
+            </div>
+
+            <form id="form-nueva-reserva">
+
+                <label for="nombre-cliente">Nombre y apellido</label>
+                <input
+                    type="text"
+                    id="nombre-cliente"
+                    placeholder="Ej: Juan Pérez"
+                    maxlength="100"
+                    required
+                >
+
+                <label for="cancha-reserva">Cancha</label>
+                <select id="cancha-reserva" required>
+                    <option value="">Seleccionar cancha</option>
+                    <option value="Cancha 1">Cancha 1</option>
+                    <option value="Cancha 2">Cancha 2</option>
+                </select>
+
+                <label for="fecha-reserva-admin">Fecha</label>
+                <input type="date" id="fecha-reserva-admin" required>
+
+                <label for="horario-reserva">Horario</label>
+                <input type="time" id="horario-reserva" required>
+
+                <label for="estado-reserva">Estado del pago</label>
+                <select id="estado-reserva" required>
+                    <option value="Pendiente">Pendiente</option>
+                    <option value="Confirmado">Confirmado</option>
+                </select>
+
+                <p id="error-formulario" class="error-formulario"
+                   role="alert" hidden></p>
+
+                <button type="submit" class="btn-guardar">
+                    Guardar reserva
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

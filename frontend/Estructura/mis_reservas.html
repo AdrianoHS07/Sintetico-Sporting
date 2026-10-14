@@ -1,99 +1,85 @@
+
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <title>Mis Reservas | Sintético Sporting</title>
     <link rel="stylesheet" href="../css/mis_reservas.css">
-
-    <title>Mis Reservas</title>
+    <script src="../js/mis_reservas.js" defer></script>
 </head>
 
 <body>
 
-<a href="javascript:history.back()" class="volver">←</a>
+    <a href="index.html" class="volver">← Volver</a>
 
-<div class="overlay">
+    <div class="overlay">
+        <main class="contenedor">
 
-    <div class="contenedor">
+            <img
+                src="../img/Escudo_del_Club_Atlético_Sporting.png"
+                class="escudo"
+                alt="Escudo del Club Atlético Sporting"
+            >
 
-        <img src="../img/Escudo_del_Club_Atlético_Sporting.png" class="escudo">
+            <h1>Mis Reservas</h1>
 
-        <h1>Mis Reservas</h1>
+            <p class="subtitulo">
+                Consultá tus partidos y el estado de tus pagos.
+            </p>
 
-        <div class="panel">
-
-            <div class="reserva"
-                 data-cancha="Cancha 1"
-                 data-fecha="21/07/2026"
-                 data-horario="20:00 - 21:00">
-
-                <h2>⚽ Cancha 1</h2>
-
-                <p>📅 21/07/2026</p>
-
-                <p>🕒 20:00 - 21:00</p>
-
-                <p class="estado">
-                    🟢 Confirmada
-                </p>
-
-                <button type="button" class="btn-detalle">
-                    VER DETALLE
+            <div class="filtros">
+                <button type="button" class="filtro activo" data-filtro="TODAS">
+                    Todas
                 </button>
 
-                <div class="detalle oculto">
+                <button type="button" class="filtro" data-filtro="PENDIENTES">
+                    Pendientes
+                </button>
 
-                    <p>⚽ Césped sintético</p>
-                    <p>👥 8 jugadores</p>
-                    <p>💳 Pago confirmado</p>
+                <button type="button" class="filtro" data-filtro="CONFIRMADAS">
+                    Confirmadas
+                </button>
 
-                </div>
-
+                <button type="button" class="filtro" data-filtro="CANCELADAS">
+                    Canceladas
+                </button>
             </div>
 
-            <div class="reserva"
-                 data-cancha="Cancha 2"
-                 data-fecha="25/07/2026"
-                 data-horario="21:00 - 22:00">
+            <section class="panel">
 
-                <h2>⚽ Cancha 2</h2>
-
-                <p>📅 25/07/2026</p>
-
-                <p>🕒 21:00 - 22:00</p>
-
-                <p class="pendiente">
-                    🟡 Pendiente de Pago
-                </p>
-
-                <button type="button" class="btn-pagar">
-                    PAGAR
-                </button>
-
-                <button type="button" class="btn-detalle">
-                    VER DETALLE
-                </button>
-
-                <div class="detalle oculto">
-
-                    <p>⚽ Césped sintético</p>
-                    <p>👥 8 jugadores</p>
-                    <p>💳 Pago pendiente</p>
-
+                <div class="encabezado-panel">
+                    <h2>📅 Tus partidos</h2>
+                    <span id="cantidad-reservas">0 reservas</span>
                 </div>
 
-            </div>
+                <div id="lista-reservas"></div>
 
-        </div>
+                <div id="sin-reservas" class="sin-reservas" hidden>
+                    <div class="icono-vacio">⚽</div>
+                    <h3>No hay reservas para mostrar</h3>
+                    <p>
+                        Cuando realices una reserva, podrás consultar
+                        su estado desde esta pantalla.
+                    </p>
+                    <a href="canchas.html" class="btn-reservar">
+                        RESERVAR CANCHA
+                    </a>
+                </div>
 
+            </section>
+
+            <p class="aviso-demo">
+                Vista de demostración. Los estados definitivos
+                deberán consultarse desde el servidor.
+            </p>
+
+            <p class="pie-pagina">
+                CLUB ATLÉTICO SPORTING · RESERVAS ONLINE
+            </p>
+
+        </main>
     </div>
 
-</div>
-
-<script src="../js/mis_reservas.js"></script>
-
 </body>
-
 </html>

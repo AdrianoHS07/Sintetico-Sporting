@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -5,57 +6,67 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>⚽ Turnos Fútbol</title>
+    <title>Iniciar Sesión | Sintético Sporting</title>
 
     <link rel="stylesheet" href="../css/login.css">
+    <script src="../js/login.js" defer></script>
 </head>
 
 <body>
 
-    <div class="login">
+    <main class="login">
 
-        <img src="../img/Escudo_del_Club_Atlético_Sporting.png" class="escudo">
+        <img
+            src="../img/Escudo_del_Club_Atlético_Sporting.png"
+            class="escudo"
+            alt="Escudo del Club Atlético Sporting"
+        >
 
-        <h1>SINTETICO SPORTING</h1>
+        <h1>SINTÉTICO SPORTING</h1>
 
         <p>Reservá tu cancha de manera rápida y sencilla</p>
 
         <form id="formLogin">
 
-            <label>Email</label>
-            <br>
-            <input 
-                type="email" 
-                id="email" 
-                placeholder="Ingrese su email"
+            <label for="email">Email</label>
+
+            <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Ingresá tu email"
+                autocomplete="email"
+                required
             >
 
-            <label>Contraseña</label>
-            <br>
-            <input 
-                type="password" 
-                id="password" 
-                placeholder="Ingrese su contraseña"
+            <label for="password">Contraseña</label>
+
+            <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Ingresá tu contraseña"
+                autocomplete="current-password"
+                required
             >
 
-            <button type="submit">INICIAR SESIÓN</button>
+            <button type="submit">
+                INICIAR SESIÓN
+            </button>
 
-            <p id="mensajeError"></p>
+            <p id="mensajeError" role="status" aria-live="polite"></p>
 
         </form>
 
-        <br><br>
+        <div class="registro">
+            <p>¿No tenés cuenta?</p>
 
-        <p>¿No tenés cuenta?</p>
+            <a href="registro.html" class="enlace-registro">
+                REGISTRATE
+            </a>
+        </div>
 
-        <a href="registro.html">
-            <button type="button">REGISTRATE</button>
-        </a>
-
-    </div>
-
-    <script src="../js/login.js"></script>
+    </main>
 
 </body>
-
 </html>
