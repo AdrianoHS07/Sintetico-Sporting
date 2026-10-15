@@ -23,13 +23,13 @@ public class UsuarioController {
 
     @PostMapping("/registro")
     public Usuario registrar(@RequestBody Usuario usuario) {
-
+        // Garantiza que todo registro desde el formulario sea siempre de rol USUARIO
+        usuario.setRol("USUARIO");
         return usuarioService.registrarUsuario(usuario);
     }
 
     @PostMapping("/login")
     public LoginResponse login(@RequestBody LoginRequest loginRequest) {
-
         return usuarioService.login(
             loginRequest.getEmail(),
             loginRequest.getContraseña()

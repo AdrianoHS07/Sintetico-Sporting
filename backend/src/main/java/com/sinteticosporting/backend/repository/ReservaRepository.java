@@ -20,4 +20,7 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
     List<Reserva> findByCanchaIdCanchaAndFechaAndEstadoIn(
             long idCancha, LocalDate fecha, List<String> estados
     );
+
+    // Obtiene todas las reservas guardadas de un usuario específico
+    List<Reserva> findByUsuarioIdUsuario(long idUsuario);
 }

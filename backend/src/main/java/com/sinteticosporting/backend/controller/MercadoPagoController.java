@@ -1,8 +1,10 @@
 package com.sinteticosporting.backend.controller;
 
 import com.mercadopago.MercadoPagoConfig;
+import com.mercadopago.client.payment.PaymentClient;
 import com.mercadopago.client.preference.*;
 import com.mercadopago.exceptions.MPApiException;
+import com.mercadopago.resources.payment.Payment;
 import com.mercadopago.resources.preference.Preference;
 import com.sinteticosporting.backend.service.ReservaService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -32,14 +34,12 @@ public class MercadoPagoController {
     @PostMapping("/crear-preferencia")
     public ResponseEntity<?> crearPreferencia(@RequestBody Map<String, Object> datosReserva) {
         try {
-            // Asigna el Access Token de prueba (TEST-...) traído de application.properties
             MercadoPagoConfig.setAccessToken(accessToken);
 
             String cancha = datosReserva.containsKey("cancha") && datosReserva.get("cancha") != null 
                     ? datosReserva.get("cancha").toString() 
                     : "Reserva Cancha Sintetica";
 
-            // Asegurar un precio válido
             Double precio = 20000.0;
             if (datosReserva.containsKey("precio") && datosReserva.get("precio") != null) {
                 try {
@@ -69,17 +69,20 @@ public class MercadoPagoController {
                     .pending("http://localhost:8080/api/mercadopago/pendiente?idReserva=" + idReserva)
                     .build();
 
-            // C. Crear la petición de preferencia sin restricciones estrictas de autoReturn
+            // C. Crear la petición de preferencia INCLUYENDO LA URL DEL WEBHOOK
+            // NOTA: Reemplazar "https://tu-dominio-o-ngrok.ngrok-free.app" por tu dominio público o URL de ngrok en desarrollo
+            String urlWebhook =  "https://chosen-unstamped-exfoliate.ngrok-free.dev/api/mercadopago/webhook";
+
             PreferenceRequest preferenceRequest = PreferenceRequest.builder()
                     .items(items)
                     .backUrls(backUrls)
                     .externalReference(idReserva)
+                    .notificationUrl(urlWebhook) // <--- CONFIGURACIÓN DEL WEBHOOK
                     .build();
 
             PreferenceClient client = new PreferenceClient();
             Preference preference = client.create(preferenceRequest);
 
-            // Retorna un JSON válido con la URL de la pasarela
             return ResponseEntity.ok(Map.of("initPoint", preference.getInitPoint()));
 
         } catch (MPApiException apiEx) {
@@ -98,7 +101,60 @@ public class MercadoPagoController {
         }
     }
 
-    // 2. Pago exitoso
+    // 2. WEBHOOK: Recibe notificaciones automáticas en segundo plano desde Mercado Pago
+    @PostMapping("/webhook")
+    public ResponseEntity<Void> recibirNotificacionWebhook(
+            @RequestParam(value = "type", required = false) String type,
+            @RequestParam(value = "data.id", required = false) String dataId,
+            @RequestBody(required = false) Map<String, Object> payload) {
+
+        try {
+            MercadoPagoConfig.setAccessToken(accessToken);
+
+            String paymentId = dataId;
+            String tipoNotificacion = type;
+
+            if (payload != null) {
+                if (tipoNotificacion == null && payload.containsKey("type")) {
+                    tipoNotificacion = String.valueOf(payload.get("type"));
+                }
+                if (paymentId == null && payload.containsKey("data")) {
+                    @SuppressWarnings("unchecked")
+                    Map<String, Object> data = (Map<String, Object>) payload.get("data");
+                    if (data != null && data.containsKey("id")) {
+                        paymentId = String.valueOf(data.get("id"));
+                    }
+                }
+            }
+
+            // Si la notificación corresponde a un pago
+            if ("payment".equalsIgnoreCase(tipoNotificacion) && paymentId != null) {
+                PaymentClient paymentClient = new PaymentClient();
+                Payment payment = paymentClient.get(Long.parseLong(paymentId));
+
+                if (payment != null && payment.getExternalReference() != null) {
+                    Long idReserva = Long.parseLong(payment.getExternalReference());
+                    String status = payment.getStatus();
+
+                    System.out.println("Webhook recibido - Pago ID: " + paymentId + " | Estado: " + status + " | Reserva ID: " + idReserva);
+
+                    if ("approved".equalsIgnoreCase(status)) {
+                        reservaService.confirmarReserva(idReserva);
+                    } else if ("rejected".equalsIgnoreCase(status) || "cancelled".equalsIgnoreCase(status)) {
+                        reservaService.cancelarReserva(idReserva);
+                    }
+                }
+            }
+
+            return ResponseEntity.ok().build();
+
+        } catch (Exception e) {
+            System.err.println("Error procesando Webhook de Mercado Pago: " + e.getMessage());
+            return ResponseEntity.ok().build(); // Retornar 200 OK para evitar reintentos continuos de MP
+        }
+    }
+
+    // 3. Redirección por Pago exitoso en navegador
     @GetMapping("/exito")
     public void pagoExitoso(@RequestParam("idReserva") Long idReserva, 
                             HttpServletResponse response) throws IOException {
@@ -107,7 +163,7 @@ public class MercadoPagoController {
         response.sendRedirect("http://127.0.0.1:5500/html/mis_reservas.html?estado=exito");
     }
 
-    // 3. Pago fallido o cancelado
+    // 4. Redirección por Pago fallido o cancelado en navegador
     @GetMapping("/fallo")
     public void pagoFallido(@RequestParam("idReserva") Long idReserva, 
                             HttpServletResponse response) throws IOException {

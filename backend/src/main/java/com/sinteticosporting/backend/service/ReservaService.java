@@ -17,35 +17,40 @@ public class ReservaService {
         this.reservaRepository = reservaRepository;
     }
 
-    // 1. Crear reserva inicial en estado PENDIENTE_PAGO
+    // Lista unificada de estados que bloquean el turno en la cancha
+    private final List<String> ESTADOS_OCUPADOS = List.of("CONFIRMADO", "RESERVADO", "PENDIENTE_PAGO");
+
+    // 1. Crear reserva
     public Reserva crearReserva(Reserva reserva) {
         boolean ocupado = reservaRepository.existsByCanchaIdCanchaAndFechaAndHoraAndEstadoIn(
                 reserva.getCancha().getIdCancha(),
                 reserva.getFecha(),
                 reserva.getHora(),
-                List.of("CONFIRMADA", "RESERVADO")
+                ESTADOS_OCUPADOS
         );
 
         if (ocupado) {
-            throw new RuntimeException("El turno seleccionado ya se encuentra ocupado.");
+            throw new RuntimeException("El turno seleccionado ya se encuentra ocupado o en proceso de pago.");
         }
 
-        // Se guarda en estado PENDIENTE_PAGO a la espera de Mercado Pago
-        reserva.setEstado("PENDIENTE_PAGO");
+        if (reserva.getEstado() == null || reserva.getEstado().isEmpty()) {
+            reserva.setEstado("PENDIENTE_PAGO");
+        }
+
         return reservaRepository.save(reserva);
     }
 
-    // 2. Confirmar la reserva cuando Mercado Pago notifica el pago exitoso
+    // 2. Confirmar la reserva tras la aprobación del pago
     @Transactional
     public void confirmarReserva(Long idReserva) {
         Reserva reserva = reservaRepository.findById(idReserva).orElse(null);
         if (reserva != null) {
-            reserva.setEstado("RESERVADO");
+            reserva.setEstado("CONFIRMADO");
             reservaRepository.save(reserva);
         }
     }
 
-    // 3. Cancelar si el pago falla o fue rechazado
+    // 3. Cancelar la reserva
     @Transactional
     public void cancelarReserva(Long idReserva) {
         Reserva reserva = reservaRepository.findById(idReserva).orElse(null);
@@ -55,8 +60,20 @@ public class ReservaService {
         }
     }
 
-    // 4. Consultar turnos ocupados para el frontend
+    // 4. Consultar turnos ocupados para deshabilitar en el frontend
     public List<Reserva> obtenerReservasOcupadas(long idCancha, LocalDate fecha) {
-        return reservaRepository.findByCanchaIdCanchaAndFechaAndEstadoIn(idCancha, fecha, List.of("CONFIRMADA", "RESERVADO"));
+        return reservaRepository.findByCanchaIdCanchaAndFechaAndEstadoIn(
+                idCancha, fecha, ESTADOS_OCUPADOS
+        );
+    }
+
+    // 5. Obtener todas las reservas de un usuario
+    public List<Reserva> obtenerReservasPorUsuario(long idUsuario) {
+        return reservaRepository.findByUsuarioIdUsuario(idUsuario);
+    }
+
+    // 6. Obtener el listado completo de reservas
+    public List<Reserva> obtenerTodas() {
+        return reservaRepository.findAll();
     }
 }

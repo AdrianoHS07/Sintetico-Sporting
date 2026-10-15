@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", function () {
 
     const formulario = document.getElementById("formLogin");
@@ -62,9 +61,9 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             const data = await respuesta.json();
+            console.log("Respuesta del login:", data);
 
-            // Debe coincidir con LoginResponse.java.
-            // Aceptamos temporalmente algunas variantes de formato.
+            // Acepta rol directo o dentro de un objeto
             const rolOriginal =
                 typeof data.rol === "string"
                     ? data.rol
@@ -78,18 +77,20 @@ document.addEventListener("DOMContentLoaded", function () {
                 .toUpperCase()
                 .replace(/^ROLE_/, "");
 
-            if (rol !== "ADMIN" && rol !== "CLIENTE") {
+            // Acepta ADMIN, USUARIO, USER o CLIENTE
+            const esAdmin = rol === "ADMIN";
+            const esUsuario = rol === "USUARIO" || rol === "USER" || rol === "CLIENTE";
+
+            if (!esAdmin && !esUsuario) {
                 mostrarMensaje(
-                    "El servidor inició sesión, pero no devolvió " +
-                    "un rol reconocido. Revisá LoginResponse.java.",
+                    "El servidor inició sesión, pero devolvió un rol no reconocido (" + rolOriginal + ").",
                     "error"
                 );
                 console.warn("Formato de rol no reconocido:", data.rol);
                 return;
             }
 
-            // Datos para personalizar la interfaz.
-            // NO deben utilizarse como autorización de seguridad.
+            // Guardar datos en el cliente para la interfaz
             localStorage.setItem("usuario", JSON.stringify(data));
 
             mostrarMensaje(
@@ -97,11 +98,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 "exito"
             );
 
-            if (rol === "ADMIN") {
-                window.location.href = "admin.html";
-            } else {
-                window.location.href = "canchas.html";
-            }
+            // Redirección según rol
+            setTimeout(() => {
+                if (esAdmin) {
+                    window.location.href = "admin.html";
+                } else {
+                    window.location.href = "canchas.html";
+                }
+            }, 500);
 
         } catch (error) {
             console.error("Error al iniciar sesión:", error);
