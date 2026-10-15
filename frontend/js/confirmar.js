@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const fechaReserva = document.getElementById("fecha-reserva");
     const horarioReserva = document.getElementById("horario-reserva");
     const btnMercadoPago = document.querySelector(".mercadopago");
+    const btnVolverHorarios = document.getElementById("btn-volver-horarios");
 
     // 2. Obtener datos de la reserva desde sessionStorage
     const reservaGuardada = sessionStorage.getItem("reservaSeleccionada");
@@ -13,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const reserva = JSON.parse(reservaGuardada);
 
         if (canchaReserva) canchaReserva.textContent = "⚽ " + (reserva.cancha || "Cancha");
-        if (horarioReserva) horarioReserva.textContent = reserva.horario;
+        if (horarioReserva) horarioReserva.textContent = reserva.horario || reserva.hora;
 
         if (fechaReserva) {
             const partesFecha = reserva.fecha ? reserva.fecha.split("-") : [];
@@ -23,13 +24,23 @@ document.addEventListener("DOMContentLoaded", function () {
                 fechaReserva.textContent = reserva.fecha;
             }
         }
+
+        // Configurar la redirección dinámica del botón "VOLVER A HORARIOS"
+        if (btnVolverHorarios) {
+            const idCancha = Number(reserva.idCancha);
+            if (idCancha === 2 || String(reserva.cancha).includes("2")) {
+                btnVolverHorarios.href = "horarios_cancha2.html";
+            } else {
+                btnVolverHorarios.href = "horarios_cancha1.html";
+            }
+        }
+
     } else {
-        // Si no hay datos de reserva, redirige al catálogo
         window.location.href = "canchas.html";
         return;
     }
 
-    // Auxiliar para formatear la hora al estándar 'HH:mm:ss' exigido por Spring Boot / LocalTime
+    // Auxiliar para formatear la hora al estándar 'HH:mm:ss' exigido por Spring Boot
     function obtenerHoraFormateada(rangoHorario) {
         if (!rangoHorario) return "18:00:00";
         const horaInicio = rangoHorario.split("-")[0].trim();
@@ -41,13 +52,22 @@ document.addEventListener("DOMContentLoaded", function () {
         const reserva = JSON.parse(reservaGuardada);
         const horaValida = obtenerHoraFormateada(reserva.horario || reserva.hora);
 
+        const usuarioGuardado = localStorage.getItem("usuario");
+        let idUsuario = 1;
+        if (usuarioGuardado) {
+            try {
+                const u = JSON.parse(usuarioGuardado);
+                idUsuario = u.idUsuario || u.id || 1;
+            } catch (e) {}
+        }
+
         const datosParaBackend = {
             fecha: reserva.fecha,
             hora: horaValida,
             precio: reserva.precio || 20000.0,
             estado: "PENDIENTE_PAGO",
             cancha: { idCancha: Number(reserva.idCancha) || 1 },
-            usuario: { idUsuario: 1 } // Ajustar según tu lógica de login
+            usuario: { idUsuario: idUsuario }
         };
 
         try {
@@ -72,20 +92,16 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // PASO 2: Evento al presionar el botón de pagar
+    // PASO 2: Evento al presionar el botón de pagar con Mercado Pago
     if (btnMercadoPago) {
         btnMercadoPago.addEventListener("click", async function (e) {
             e.preventDefault();
 
-            // Deshabilitar botón para evitar múltiples clics
             btnMercadoPago.disabled = true;
             const textoOriginal = btnMercadoPago.textContent;
             btnMercadoPago.textContent = "⏳ PROCESANDO...";
 
-            // A) Primero guarda en la base de datos
             const reservaCreada = await guardarReservaEnBD();
-
-            // Soporta tanto 'idReserva' como 'id' en el objeto devuelto por Spring Boot
             const idGenerado = reservaCreada ? (reservaCreada.idReserva || reservaCreada.id) : null;
 
             if (!reservaCreada || !idGenerado) {
@@ -95,7 +111,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            // B) Solicita la preferencia de pago a Mercado Pago (Spring Boot en puerto 8080)
             try {
                 const resMP = await fetch("http://localhost:8080/api/mercadopago/crear-preferencia", {
                     method: "POST",
@@ -110,7 +125,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 const dataMP = await resMP.json();
 
                 if (resMP.ok && dataMP.initPoint) {
-                    // Redirige al usuario a la pasarela de Mercado Pago
                     window.location.href = dataMP.initPoint;
                 } else {
                     console.error("Respuesta fallida de Mercado Pago:", dataMP);

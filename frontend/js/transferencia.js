@@ -1,19 +1,19 @@
-
 document.addEventListener("DOMContentLoaded", function () {
 
     // ==========================================
-    // 1. MENÚ LATERAL
+    // 1. MENÚ LATERAL Y NAVEGACIÓN
     // ==========================================
 
     const checkbox = document.getElementById("menu-toggle");
     const menu = document.querySelector(".menu-lateral");
     const botonMenu = document.querySelector(".hamburguesa");
+    const btnVolverArriba = document.getElementById("btn-volver-arriba");
 
     document.addEventListener("click", function (evento) {
         if (!checkbox || !checkbox.checked) return;
 
         const dentroDelMenu = menu.contains(evento.target);
-        const enBoton = botonMenu.contains(evento.target);
+        const enBoton = botonMenu ? botonMenu.contains(evento.target) : false;
 
         if (!dentroDelMenu && !enBoton) {
             checkbox.checked = false;
@@ -66,6 +66,12 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         return String(fechaOriginal);
+    }
+
+    function obtenerHoraFormateada(rangoHorario) {
+        if (!rangoHorario) return "18:00:00";
+        const horaInicio = rangoHorario.split("-")[0].trim();
+        return horaInicio.length === 5 ? horaInicio + ":00" : horaInicio;
     }
 
     function escribirTexto(id, valor) {
@@ -123,7 +129,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // ==========================================
-    // 4. AVISO DE TRANSFERENCIA (DEMO)
+    // 4. GUARDAR RESERVA EN MYSQL Y MOSTRAR PENDIENTE
     // ==========================================
 
     const botonTransferencia = document.getElementById("btn-transferencia");
@@ -131,43 +137,85 @@ document.addEventListener("DOMContentLoaded", function () {
     const panelPendiente = document.getElementById("panel-pendiente");
     const mensajeError = document.getElementById("mensaje-error");
 
-    botonTransferencia.addEventListener("click", function () {
+    botonTransferencia.addEventListener("click", async function () {
 
-        mensajeError.hidden = true;
+        if (mensajeError) mensajeError.hidden = true;
 
         const confirmar = window.confirm(
             "¿Ya realizaste la transferencia bancaria?\n\n" +
-            "Tu pago quedará pendiente de verificación."
+            "Tu pago quedará pendiente de verificación por el administrador."
         );
 
         if (!confirmar) return;
 
-        // Guardamos el aviso solamente en el navegador.
-        // Esto NO crea una reserva en MySQL ni confirma el pago.
-        const avisoDemo = {
-            ...reserva,
-            metodoPago: "TRANSFERENCIA",
-            estado: "PENDIENTE_VERIFICACION",
-            fechaAviso: new Date().toISOString()
+        // Deshabilitar el botón mientras se procesa la solicitud
+        botonTransferencia.disabled = true;
+        const textoOriginal = botonTransferencia.textContent;
+        botonTransferencia.textContent = "⏳ REGISTRANDO RESERVA...";
+
+        // Obtener ID del usuario desde localStorage si está logueado
+        const usuarioGuardado = localStorage.getItem("usuario");
+        let idUsuario = 1;
+
+        if (usuarioGuardado) {
+            try {
+                const u = JSON.parse(usuarioGuardado);
+                idUsuario = u.idUsuario || u.id || 1;
+            } catch (e) {}
+        }
+
+        const idCanchaValido = Number(reserva.idCancha) || (String(reserva.cancha).includes("2") ? 2 : 1);
+        const horaValida = obtenerHoraFormateada(reserva.horario || reserva.hora);
+
+        const datosParaBackend = {
+            fecha: reserva.fecha,
+            hora: horaValida,
+            precio: precio,
+            estado: "PENDIENTE_PAGOS",
+            cancha: { idCancha: idCanchaValido },
+            usuario: { idUsuario: idUsuario }
         };
 
         try {
-            sessionStorage.setItem(
-                "transferenciaPendienteDemo",
-                JSON.stringify(avisoDemo)
-            );
+            const respuesta = await fetch("http://localhost:8080/reservas/crear", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(datosParaBackend)
+            });
+
+            if (respuesta.ok) {
+                const dataReserva = await respuesta.json();
+                console.log("Reserva registrada con éxito en MySQL:", dataReserva);
+
+                escribirTexto("resultado-cancha", cancha);
+                escribirTexto("resultado-fecha", fecha);
+                escribirTexto("resultado-horario", horario);
+
+                // Ocultar vista de datos y mostrar panel de pendiente
+                panelTransferencia.hidden = true;
+                panelPendiente.hidden = false;
+
+                // Redirigir botón de arriba hacia el menú de canchas
+                if (btnVolverArriba) {
+                    btnVolverArriba.href = "canchas.html";
+                }
+
+                window.scrollTo({ top: 0, behavior: "smooth" });
+
+            } else {
+                const errorTexto = await respuesta.text();
+                console.error("Error al guardar reserva en Spring Boot:", respuesta.status, errorTexto);
+                alert("Ocurrió un error al registrar la reserva. Intentá nuevamente.");
+                botonTransferencia.disabled = false;
+                botonTransferencia.textContent = textoOriginal;
+            }
+
         } catch (error) {
-            console.warn("No se pudo guardar el aviso de demostración:", error);
+            console.error("Error de conexión:", error);
+            alert("No se pudo conectar con el servidor. Comprobá que Spring Boot esté funcionando.");
+            botonTransferencia.disabled = false;
+            botonTransferencia.textContent = textoOriginal;
         }
-
-        escribirTexto("resultado-cancha", cancha);
-        escribirTexto("resultado-fecha", fecha);
-        escribirTexto("resultado-horario", horario);
-
-        panelTransferencia.hidden = true;
-        panelPendiente.hidden = false;
-
-        window.scrollTo({ top: 0, behavior: "smooth" });
     });
 
 });

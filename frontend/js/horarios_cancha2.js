@@ -5,64 +5,62 @@ document.addEventListener("DOMContentLoaded", function () {
     const botonMenu = document.querySelector(".hamburguesa");
 
     const inputFecha = document.getElementById("fecha-reserva");
-    const botonesReservar = document.querySelectorAll(".btn-reservar");
     const errorFecha = document.getElementById("error-fecha");
 
+    // Establecer fecha mínima (hoy)
     const hoy = new Date();
     const fechaMinima = hoy.toISOString().split("T")[0];
-
-    inputFecha.min = fechaMinima;
-
-    document.addEventListener("click", function (evento) {
-
-        if (!checkbox.checked) {
-            return;
+    if (inputFecha) {
+        inputFecha.min = fechaMinima;
+        if (!inputFecha.value) {
+            inputFecha.value = fechaMinima;
         }
+    }
 
-        const clickDentroDelMenu = menu.contains(evento.target);
-        const clickEnElBoton = botonMenu.contains(evento.target);
+    // Cerrar menú al hacer clic afuera
+    document.addEventListener("click", function (evento) {
+        if (!checkbox || !checkbox.checked) return;
 
-        if (!clickDentroDelMenu && !clickEnElBoton) {
+        const dentroDelMenu = menu.contains(evento.target);
+        const enBoton = botonMenu ? botonMenu.contains(evento.target) : false;
+
+        if (!dentroDelMenu && !enBoton) {
             checkbox.checked = false;
         }
-
     });
 
+    // Marcar enlace activo en el menú lateral
     const paginaActual = window.location.pathname.split("/").pop();
-    const links = document.querySelectorAll(".menu-lateral a");
-
-    links.forEach(function (link) {
-
-        const destino = link.getAttribute("href");
-
-        if (destino === paginaActual) {
+    document.querySelectorAll(".menu-lateral a").forEach(function (link) {
+        if (link.getAttribute("href") === paginaActual) {
             link.classList.add("activo");
         }
-
     });
 
-    botonesReservar.forEach(function (boton) {
-
+    // Evento para los botones de reservar
+    document.querySelectorAll(".btn-reservar").forEach(function (boton) {
         boton.addEventListener("click", function () {
 
-            if (inputFecha.value === "") {
-                errorFecha.textContent = "Seleccioná una fecha antes de reservar.";
+            if (!inputFecha.value) {
+                if (errorFecha) errorFecha.textContent = "Seleccioná una fecha antes de reservar.";
                 return;
             }
 
-            errorFecha.textContent = "";
+            if (errorFecha) errorFecha.textContent = "";
 
             const filaHorario = boton.closest(".horario");
-
             const horarioTexto = filaHorario
                 .querySelector(".info h3")
                 .textContent
                 .trim();
 
             const reserva = {
+                idCancha: 2,
                 cancha: "CANCHA 2",
                 fecha: inputFecha.value,
-                horario: horarioTexto
+                horario: horarioTexto,
+                hora: horarioTexto.split("-")[0].trim() + ":00",
+                precio: 20000.0
             };
 
             sessionStorage.setItem(
@@ -71,9 +69,7 @@ document.addEventListener("DOMContentLoaded", function () {
             );
 
             window.location.href = "confirmar.html";
-
         });
-
     });
 
 });

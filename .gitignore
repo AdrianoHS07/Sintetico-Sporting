@@ -29,6 +29,3 @@ replay_pid*
 
 # Imágenes del frontend
 /frontend/Estructura/img/
-
-# Configuración del backend
-/backend/src/main/resources/application.properties
