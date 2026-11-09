@@ -9,14 +9,29 @@ document.addEventListener("DOMContentLoaded", function () {
     const botonMenu = document.querySelector(".hamburguesa");
     const btnVolverArriba = document.getElementById("btn-volver-arriba");
 
+    // Asegurar apertura/cierre interactivo si el botón hamburguesa es un label o botón común
+    if (botonMenu && checkbox) {
+        botonMenu.addEventListener("click", function () {
+            setTimeout(() => {
+                if (checkbox.checked) {
+                    if (menu) menu.classList.add("activo");
+                } else {
+                    if (menu) menu.classList.remove("activo");
+                }
+            }, 10);
+        });
+    }
+
+    // Cerrar menú al hacer clic fuera de él
     document.addEventListener("click", function (evento) {
         if (!checkbox || !checkbox.checked) return;
 
-        const dentroDelMenu = menu.contains(evento.target);
+        const dentroDelMenu = menu ? menu.contains(evento.target) : false;
         const enBoton = botonMenu ? botonMenu.contains(evento.target) : false;
 
         if (!dentroDelMenu && !enBoton) {
             checkbox.checked = false;
+            if (menu) menu.classList.remove("activo");
         }
     });
 
@@ -129,7 +144,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // ==========================================
-    // 4. GUARDAR RESERVA EN MYSQL Y MOSTRAR PENDIENTE
+    // 4. GUARDAR RESERVA EN MYSQL Y MOSTRAR PENDIENTE (AL CLICKEAR EL BOTÓN FINAL)
     // ==========================================
 
     const botonTransferencia = document.getElementById("btn-transferencia");
@@ -137,85 +152,89 @@ document.addEventListener("DOMContentLoaded", function () {
     const panelPendiente = document.getElementById("panel-pendiente");
     const mensajeError = document.getElementById("mensaje-error");
 
-    botonTransferencia.addEventListener("click", async function () {
+    if (botonTransferencia) {
+        botonTransferencia.addEventListener("click", async function () {
 
-        if (mensajeError) mensajeError.hidden = true;
+            if (mensajeError) mensajeError.hidden = true;
 
-        const confirmar = window.confirm(
-            "¿Ya realizaste la transferencia bancaria?\n\n" +
-            "Tu pago quedará pendiente de verificación por el administrador."
-        );
+            const confirmar = window.confirm(
+                "¿Ya realizaste la transferencia bancaria?\n\n" +
+                "Tu pago quedará pendiente de verificación por el administrador."
+            );
 
-        if (!confirmar) return;
+            if (!confirmar) return;
 
-        // Deshabilitar el botón mientras se procesa la solicitud
-        botonTransferencia.disabled = true;
-        const textoOriginal = botonTransferencia.textContent;
-        botonTransferencia.textContent = "⏳ REGISTRANDO RESERVA...";
+            // Deshabilitar el botón mientras se procesa la solicitud
+            botonTransferencia.disabled = true;
+            const textoOriginal = botonTransferencia.textContent;
+            botonTransferencia.textContent = "⏳ REGISTRANDO RESERVA...";
 
-        // Obtener ID del usuario desde localStorage si está logueado
-        const usuarioGuardado = localStorage.getItem("usuario");
-        let idUsuario = 1;
+            // Obtener ID del usuario desde localStorage si está logueado
+            const usuarioGuardado = localStorage.getItem("usuario");
+            let idUsuario = 1;
 
-        if (usuarioGuardado) {
+            if (usuarioGuardado) {
+                try {
+                    const u = JSON.parse(usuarioGuardado);
+                    idUsuario = u.idUsuario || u.id || 1;
+                } catch (e) {}
+            }
+
+            const idCanchaValido = Number(reserva.idCancha) || (String(reserva.cancha).includes("2") ? 2 : 1);
+            const horaValida = obtenerHoraFormateada(reserva.horario || reserva.hora);
+
+            const datosParaBackend = {
+                fecha: reserva.fecha,
+                hora: horaValida,
+                precio: precio,
+                estado: "PENDIENTE_PAGO",
+                cancha: { idCancha: idCanchaValido },
+                usuario: { idUsuario: idUsuario }
+            };
+
             try {
-                const u = JSON.parse(usuarioGuardado);
-                idUsuario = u.idUsuario || u.id || 1;
-            } catch (e) {}
-        }
+                const respuesta = await fetch("http://localhost:8080/reservas/crear", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(datosParaBackend)
+                });
 
-        const idCanchaValido = Number(reserva.idCancha) || (String(reserva.cancha).includes("2") ? 2 : 1);
-        const horaValida = obtenerHoraFormateada(reserva.horario || reserva.hora);
+                if (respuesta.ok) {
+                    const dataReserva = await respuesta.json();
+                    console.log("Reserva registrada con éxito en MySQL:", dataReserva);
 
-        const datosParaBackend = {
-            fecha: reserva.fecha,
-            hora: horaValida,
-            precio: precio,
-            estado: "PENDIENTE_PAGOS",
-            cancha: { idCancha: idCanchaValido },
-            usuario: { idUsuario: idUsuario }
-        };
+                    escribirTexto("resultado-cancha", cancha);
+                    escribirTexto("resultado-fecha", fecha);
+                    escribirTexto("resultado-horario", horario);
 
-        try {
-            const respuesta = await fetch("http://localhost:8080/reservas/crear", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(datosParaBackend)
-            });
+                    // Ocultar vista de datos y mostrar panel de pendiente
+                    if (panelTransferencia) panelTransferencia.hidden = true;
+                    if (panelPendiente) panelPendiente.hidden = false;
 
-            if (respuesta.ok) {
-                const dataReserva = await respuesta.json();
-                console.log("Reserva registrada con éxito en MySQL:", dataReserva);
+                    // Redirigir botón de arriba hacia el menú de canchas
+                    if (btnVolverArriba) {
+                        btnVolverArriba.href = "canchas.html";
+                    }
 
-                escribirTexto("resultado-cancha", cancha);
-                escribirTexto("resultado-fecha", fecha);
-                escribirTexto("resultado-horario", horario);
+                    window.scrollTo({ top: 0, behavior: "smooth" });
 
-                // Ocultar vista de datos y mostrar panel de pendiente
-                panelTransferencia.hidden = true;
-                panelPendiente.hidden = false;
+                    // Limpiar la reserva guardada de la memoria temporal
+                    sessionStorage.removeItem("reservaSeleccionada");
 
-                // Redirigir botón de arriba hacia el menú de canchas
-                if (btnVolverArriba) {
-                    btnVolverArriba.href = "canchas.html";
+                } else {
+                    const errorTexto = await respuesta.text();
+                    console.error("Error al guardar reserva en Spring Boot:", respuesta.status, errorTexto);
+                    alert("Ocurrió un error al registrar la reserva: " + errorTexto);
+                    botonTransferencia.disabled = false;
+                    botonTransferencia.textContent = textoOriginal;
                 }
 
-                window.scrollTo({ top: 0, behavior: "smooth" });
-
-            } else {
-                const errorTexto = await respuesta.text();
-                console.error("Error al guardar reserva en Spring Boot:", respuesta.status, errorTexto);
-                alert("Ocurrió un error al registrar la reserva. Intentá nuevamente.");
+            } catch (error) {
+                console.error("Error de conexión:", error);
+                alert("No se pudo conectar con el servidor. Comprobá que Spring Boot esté funcionando.");
                 botonTransferencia.disabled = false;
                 botonTransferencia.textContent = textoOriginal;
             }
-
-        } catch (error) {
-            console.error("Error de conexión:", error);
-            alert("No se pudo conectar con el servidor. Comprobá que Spring Boot esté funcionando.");
-            botonTransferencia.disabled = false;
-            botonTransferencia.textContent = textoOriginal;
-        }
-    });
-
+        });
+    }
 });

@@ -26,7 +26,7 @@
 
     <a href="canchas.html" class="activo">⚽ Reservar Cancha</a>
     <a href="mis_reservas.html">📅 Mis Reservas</a>
-    <a href="javascript:void(0)" id="btn-cerrar-sesion">🚪 Cerrar Sesión</a>
+    <a href="javascript:void(0)" id="btn-cerrar-sesion">Cerrar Sesión</a>
 
 </nav>
 
@@ -40,30 +40,9 @@
         Sistema de Reserva de Canchas
     </p>
 
-    <div class="cancha">
-
-        <h2>⚽ CANCHA 1</h2>
-
-        <p>Césped sintético</p>
-        <p>8 jugadores</p>
-
-        <a href="horarios_cancha1.html">
-            <button>VER HORARIOS</button>
-        </a>
-
-    </div>
-
-    <div class="cancha">
-
-        <h2>⚽ CANCHA 2</h2>
-
-        <p>Césped sintético</p>
-        <p>8 jugadores</p>
-
-        <a href="horarios_cancha2.html">
-            <button>VER HORARIOS</button>
-        </a>
-
+    <!-- Contenedor donde se inyectarán dinámicamente todas las canchas de la BD -->
+    <div id="contenedor-canchas" class="grilla-canchas" style="display: flex; flex-direction: column; gap: 20px; align-items: center; width: 100%;">
+        <!-- Se cargan por JS -->
     </div>
 
 </div>

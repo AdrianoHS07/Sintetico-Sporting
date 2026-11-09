@@ -1,6 +1,9 @@
 package com.sinteticosporting.backend.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,5 +37,13 @@ public class UsuarioController {
             loginRequest.getEmail(),
             loginRequest.getContraseña()
         );
+    }
+
+    // Endpoint para buscar usuario por DNI (usado en el modal de reservas del admin)
+    @GetMapping("/dni/{dni}")
+    public ResponseEntity<Usuario> buscarPorDni(@PathVariable String dni) {
+        return usuarioService.buscarPorDni(dni)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }

@@ -1,5 +1,7 @@
 package com.sinteticosporting.backend.service;
 
+import java.util.Optional;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -48,5 +50,10 @@ public class UsuarioService {
         response.setEstado(usuario.getEstado());
         
         return response;
+    }
+
+    // Método para buscar usuarios por DNI (necesario para la búsqueda y autocompletado en el Admin)
+    public Optional<Usuario> buscarPorDni(String dni) {
+        return usuarioRepository.findByDni(dni);
     }
 }

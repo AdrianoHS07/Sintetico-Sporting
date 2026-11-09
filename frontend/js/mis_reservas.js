@@ -104,11 +104,25 @@ document.addEventListener("DOMContentLoaded", function () {
             if (respuesta.ok) {
                 const data = await respuesta.json();
                 
+                const ahora = new Date();
+                const fechaHoyStr = ahora.toISOString().split("T")[0];
+                const horaActualStr = String(ahora.getHours()).padStart(2, "0") + ":" + String(ahora.getMinutes()).padStart(2, "0");
+
                 if (Array.isArray(data)) {
                     reservas = data.filter(r => {
-                        if (!r.usuario) return true;
-                        const uId = r.usuario.idUsuario || r.usuario.id;
-                        return String(uId) === String(idUsuario);
+                        if (r.usuario) {
+                            const uId = r.usuario.idUsuario || r.usuario.id;
+                            if (String(uId) !== String(idUsuario)) return false;
+                        }
+
+                        const fechaReserva = String(r.fecha).split("T")[0];
+                        const horaReserva = r.hora ? String(r.hora).substring(0, 5) : "00:00";
+
+                        if (String(r.estado).toUpperCase().includes("CANCELADA")) return true;
+                        if (fechaReserva > fechaHoyStr) return true;
+                        if (fechaReserva === fechaHoyStr && horaReserva >= horaActualStr) return true;
+
+                        return false;
                     });
                 } else {
                     reservas = [];
@@ -157,11 +171,16 @@ document.addEventListener("DOMContentLoaded", function () {
         const superior = crear("div", "reserva-superior");
 
         let nombreCancha = "Cancha";
+        let modalidadCancha = "Fútbol 5";
+        let descripcionCancha = "Césped sintético";
+
         if (reserva.cancha) {
             if (typeof reserva.cancha === "object") {
-                nombreCancha = reserva.cancha.nombre || ("CANCHA " + (reserva.cancha.idCancha || ""));
+                nombreCancha = reserva.cancha.nombre || ("CANCHA " + (reserva.cancha.numero || reserva.cancha.idCancha || ""));
+                modalidadCancha = reserva.cancha.modalidad || "Fútbol 5";
+                descripcionCancha = reserva.cancha.descripcion || "Césped sintético";
             } else {
-                nombreCancha = reserva.cancha;
+                nombreCancha = "Cancha " + reserva.cancha;
             }
         }
 
@@ -178,25 +197,58 @@ document.addEventListener("DOMContentLoaded", function () {
         );
 
         const acciones = crear("div", "acciones");
-        const boton = crear("button", "btn-detalle", "VER DETALLE");
-        boton.type = "button";
+        
+        const botonDetalle = crear("button", "btn-detalle", "VER DETALLE");
+        botonDetalle.type = "button";
+        acciones.append(botonDetalle);
+
+        // Botón de cancelar turno (solo si no está ya cancelada)
+        const estadoUpper = String(reserva.estado || "").toUpperCase();
+        if (!estadoUpper.includes("CANCELADA")) {
+            const botonCancelar = crear("button", "btn-cancelar-turno", "CANCELAR TURNO");
+            botonCancelar.type = "button";
+            
+            botonCancelar.addEventListener("click", function () {
+                if (confirm("¿Estás seguro de que querés cancelar este turno? Recordá que cancelar con menos de 4 horas de anticipación acumula penalizaciones.")) {
+                    const idUsuario = obtenerIdUsuarioLogueado();
+                    
+                    fetch(`http://localhost:8080/reservas/cancelar-usuario/${reserva.idReserva}?idUsuario=${idUsuario}`, {
+                        method: "PUT"
+                    })
+                    .then(async response => {
+                        if (response.ok) {
+                            alert("¡Reserva cancelada con éxito!");
+                        } else {
+                            const mensajeError = await response.text();
+                            alert("Aviso: " + (mensajeError || "Se canceló el turno pero se registró una falta por anticipación menor a 4 horas."));
+                        }
+                        cargarReservasDesdeBD();
+                    })
+                    .catch(err => {
+                        console.error("Error al cancelar la reserva:", err);
+                        alert("Error de conexión al intentar cancelar el turno.");
+                    });
+                }
+            });
+
+            acciones.append(botonCancelar);
+        }
 
         const detalle = crear("div", "detalle");
         detalle.hidden = true;
 
         detalle.append(
-            crear("p", "", "⚽ Césped sintético"),
-            crear("p", "", "👥 Fútbol 8"),
+            crear("p", "", "⚽ " + descripcionCancha),
+            crear("p", "", "👥 " + modalidadCancha),
             crear("p", "", "💳 " + est.descripcion),
-            crear("p", "", "💰 Importe: " + precioLegible(reserva.precio))
+            crear("p", "", "💰 Importe de la reserva: " + precioLegible(reserva.precio))
         );
 
-        boton.addEventListener("click", function () {
+        botonDetalle.addEventListener("click", function () {
             detalle.hidden = !detalle.hidden;
-            boton.textContent = detalle.hidden ? "VER DETALLE" : "OCULTAR DETALLE";
+            botonDetalle.textContent = detalle.hidden ? "VER DETALLE" : "OCULTAR DETALLE";
         });
 
-        acciones.append(boton);
         tarjeta.append(superior, datos, acciones, detalle);
 
         return tarjeta;
