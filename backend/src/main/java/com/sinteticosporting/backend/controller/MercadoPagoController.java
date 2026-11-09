@@ -62,22 +62,22 @@ public class MercadoPagoController {
             List<PreferenceItemRequest> items = new ArrayList<>();
             items.add(itemRequest);
 
-            // B. URLs de retorno a Spring Boot
+            // B. URLs de retorno y Webhook usando ngrok (Necesario para autoReturn)
+            String urlBaseNgrok = "https://chosen-unstamped-exfoliate.ngrok-free.dev";
+
             PreferenceBackUrlsRequest backUrls = PreferenceBackUrlsRequest.builder()
-                    .success("http://localhost:8080/api/mercadopago/exito?idReserva=" + idReserva)
-                    .failure("http://localhost:8080/api/mercadopago/fallo?idReserva=" + idReserva)
-                    .pending("http://localhost:8080/api/mercadopago/pendiente?idReserva=" + idReserva)
+                    .success(urlBaseNgrok + "/api/mercadopago/exito?idReserva=" + idReserva)
+                    .failure(urlBaseNgrok + "/api/mercadopago/fallo?idReserva=" + idReserva)
+                    .pending(urlBaseNgrok + "/api/mercadopago/exito?idReserva=" + idReserva)
                     .build();
 
-            // C. Crear la petición de preferencia INCLUYENDO LA URL DEL WEBHOOK
-            // NOTA: Reemplazar "https://tu-dominio-o-ngrok.ngrok-free.app" por tu dominio público o URL de ngrok en desarrollo
-            String urlWebhook =  "https://chosen-unstamped-exfoliate.ngrok-free.dev/api/mercadopago/webhook";
-
+            // C. Crear la petición de preferencia
             PreferenceRequest preferenceRequest = PreferenceRequest.builder()
                     .items(items)
                     .backUrls(backUrls)
                     .externalReference(idReserva)
-                    .notificationUrl(urlWebhook) // <--- CONFIGURACIÓN DEL WEBHOOK
+                    .notificationUrl(urlBaseNgrok + "/api/mercadopago/webhook")
+                    .autoReturn("approved") // Fuerza el retorno automático al aprobarse el pago
                     .build();
 
             PreferenceClient client = new PreferenceClient();
@@ -127,7 +127,6 @@ public class MercadoPagoController {
                 }
             }
 
-            // Si la notificación corresponde a un pago
             if ("payment".equalsIgnoreCase(tipoNotificacion) && paymentId != null) {
                 PaymentClient paymentClient = new PaymentClient();
                 Payment payment = paymentClient.get(Long.parseLong(paymentId));
@@ -150,7 +149,7 @@ public class MercadoPagoController {
 
         } catch (Exception e) {
             System.err.println("Error procesando Webhook de Mercado Pago: " + e.getMessage());
-            return ResponseEntity.ok().build(); // Retornar 200 OK para evitar reintentos continuos de MP
+            return ResponseEntity.ok().build();
         }
     }
 
@@ -160,7 +159,10 @@ public class MercadoPagoController {
                             HttpServletResponse response) throws IOException {
         
         reservaService.confirmarReserva(idReserva);
-        response.sendRedirect("http://127.0.0.1:5500/html/mis_reservas.html?estado=exito");
+        System.out.println("Pago exitoso procesado para reserva ID: " + idReserva);
+        
+        // Redirige automáticamente de vuelta al frontend local
+        response.sendRedirect("http://127.0.0.1:5500/frontend/Estructura/reserva_exitosa.html?estado=exito");
     }
 
     // 4. Redirección por Pago fallido o cancelado en navegador
@@ -169,6 +171,6 @@ public class MercadoPagoController {
                             HttpServletResponse response) throws IOException {
         
         reservaService.cancelarReserva(idReserva);
-        response.sendRedirect("http://127.0.0.1:5500/html/confirmar.html?error=pago_rechazado");
+        response.sendRedirect("http://127.0.0.1:5500/frontend/Estructura/confirmar.html?error=pago_rechazado");
     }
 }

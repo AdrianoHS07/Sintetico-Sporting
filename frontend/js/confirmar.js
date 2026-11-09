@@ -1,13 +1,44 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
 
     // 1. Capturar elementos del DOM
     const canchaReserva = document.getElementById("cancha-reserva");
     const fechaReserva = document.getElementById("fecha-reserva");
     const horarioReserva = document.getElementById("horario-reserva");
+    const modalidadReserva = document.getElementById("modalidad-reserva"); // Capturar elemento modalidad
     const btnMercadoPago = document.querySelector(".mercadopago");
     const btnVolverHorarios = document.getElementById("btn-volver-horarios");
 
-    // 2. Obtener datos de la reserva desde sessionStorage
+    // Obtener usuario logueado en localStorage
+    const usuarioGuardado = localStorage.getItem("usuario");
+    let idUsuario = 1;
+    if (usuarioGuardado) {
+        try {
+            const u = JSON.parse(usuarioGuardado);
+            idUsuario = u.idUsuario || u.id || 1;
+        } catch (e) {}
+    }
+
+    // 2. VERIFICACIÓN PREVIA DE SUSPENSIÓN AL CARGAR LA PÁGINA
+    try {
+        const respuestaUser = await fetch(`http://localhost:8080/usuarios/${idUsuario}`);
+        if (respuestaUser.ok) {
+            const datosUsuario = await respuestaUser.json();
+            if (datosUsuario.suspendidoHasta) {
+                const fechaSuspension = new Date(datosUsuario.suspendidoHasta);
+                const ahora = new Date();
+
+                if (fechaSuspension > ahora) {
+                    alert(`Aviso: Tu cuenta se encuentra suspendida temporalmente por acumulación de multas hasta el ${datosUsuario.suspendidoHasta.split('T')[0]}. No podés realizar nuevas reservas.`);
+                    window.location.href = "canchas.html";
+                    return;
+                }
+            }
+        }
+    } catch (error) {
+        console.error("Error al verificar suspensión del usuario:", error);
+    }
+
+    // 3. Obtener datos de la reserva desde sessionStorage
     const reservaGuardada = sessionStorage.getItem("reservaSeleccionada");
 
     if (reservaGuardada) {
@@ -15,6 +46,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (canchaReserva) canchaReserva.textContent = "⚽ " + (reserva.cancha || "Cancha");
         if (horarioReserva) horarioReserva.textContent = reserva.horario || reserva.hora;
+        if (modalidadReserva) modalidadReserva.textContent = reserva.modalidad || "Fútbol 5"; // Mostrar la modalidad guardada
 
         if (fechaReserva) {
             const partesFecha = reserva.fecha ? reserva.fecha.split("-") : [];
@@ -25,14 +57,9 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
 
-        // Configurar la redirección dinámica del botón "VOLVER A HORARIOS"
         if (btnVolverHorarios) {
-            const idCancha = Number(reserva.idCancha);
-            if (idCancha === 2 || String(reserva.cancha).includes("2")) {
-                btnVolverHorarios.href = "horarios_cancha2.html";
-            } else {
-                btnVolverHorarios.href = "horarios_cancha1.html";
-            }
+            const idCancha = Number(reserva.idCancha) || 1;
+            btnVolverHorarios.href = `horarios.html?id=${idCancha}`;
         }
 
     } else {
@@ -47,19 +74,10 @@ document.addEventListener("DOMContentLoaded", function () {
         return horaInicio.length === 5 ? horaInicio + ":00" : horaInicio;
     }
 
-    // PASO 1: Enviar datos a Spring Boot para guardar la reserva en MySQL
+    // PASO 1: Enviar datos a Spring Boot para guardar la reserva en MySQL (Exclusivo para Mercado Pago)
     async function guardarReservaEnBD() {
         const reserva = JSON.parse(reservaGuardada);
         const horaValida = obtenerHoraFormateada(reserva.horario || reserva.hora);
-
-        const usuarioGuardado = localStorage.getItem("usuario");
-        let idUsuario = 1;
-        if (usuarioGuardado) {
-            try {
-                const u = JSON.parse(usuarioGuardado);
-                idUsuario = u.idUsuario || u.id || 1;
-            } catch (e) {}
-        }
 
         const datosParaBackend = {
             fecha: reserva.fecha,
@@ -84,10 +102,12 @@ document.addEventListener("DOMContentLoaded", function () {
             } else {
                 const errorTexto = await respuesta.text();
                 console.error("Error al guardar reserva en Spring Boot:", respuesta.status, errorTexto);
+                alert("Aviso: " + errorTexto);
                 return null;
             }
         } catch (error) {
             console.error("Error de red al conectar con Spring Boot:", error);
+            alert("Error de conexión con el servidor de reservas.");
             return null;
         }
     }
@@ -105,7 +125,6 @@ document.addEventListener("DOMContentLoaded", function () {
             const idGenerado = reservaCreada ? (reservaCreada.idReserva || reservaCreada.id) : null;
 
             if (!reservaCreada || !idGenerado) {
-                alert("Ocurrió un error al guardar la reserva en la base de datos.");
                 btnMercadoPago.disabled = false;
                 btnMercadoPago.textContent = textoOriginal;
                 return;
@@ -138,6 +157,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 btnMercadoPago.disabled = false;
                 btnMercadoPago.textContent = textoOriginal;
             }
+        });
+    }
+
+    // PASO 3: Botón de transferencia bancaria (SOLO REDIRIGE, sin guardar en la BD todavía)
+    const btnTransferencia = document.querySelector(".transferencia");
+    if (btnTransferencia) {
+        btnTransferencia.addEventListener("click", function (e) {
+            e.preventDefault();
+            // Redirige a transferencia.html para que el usuario vea los datos bancarios
+            window.location.href = "transferencia.html";
         });
     }
 });

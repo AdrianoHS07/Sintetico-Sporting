@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/horarios.css">
+    <title>Horarios de Cancha | Sintético Sporting</title>
+</head>
+
+<body>
+
+    <!-- BOTÓN HAMBURGUESA (Accionado por JavaScript) -->
+    <button type="button" class="hamburguesa" id="btn-hamburguesa">☰</button>
+
+    <nav class="menu-lateral" id="menu-lateral">
+        <div class="perfil">
+            <img src="../img/Escudo_del_Club_Atlético_Sporting.png" alt="Escudo Sporting">
+            <h2>SINTÉTICO SPORTING</h2>
+        </div>
+
+        <a href="canchas.html">⚽ Reservar Cancha</a>
+        <a href="mis_reservas.html">📅 Mis Reservas</a>
+        <a href="login.html"> Cerrar Sesión</a>
+    </nav>
+
+    <a href="canchas.html" class="boton-volver">← Volver</a>
+
+    <div class="overlay">
+        <main class="contenedor">
+
+            <img src="../img/Escudo_del_Club_Atlético_Sporting.png" class="escudo" alt="Escudo Sporting">
+
+            <!-- Título dinámico según la cancha -->
+            <h1 id="titulo-cancha">CANCHA</h1>
+            <p id="descripcion-cancha" class="subtitulo">Seleccioná la fecha y el horario para tu partido</p>
+            <p style="color: #ffcb80; margin-bottom: 20px;">Valor de la reserva: <span id="precio-cancha">$0</span></p>
+
+            <section class="panel">
+
+                <div class="fecha">
+                    <label for="fecha-reserva">📅 FECHA DEL PARTIDO:</label>
+                    <input type="date" id="fecha-reserva">
+                    <p id="error-fecha" class="mensaje-error"></p>
+                </div>
+
+                <div id="contenedor-horarios" class="contenedor-horarios">
+                    <!-- Los horarios se cargan e inyectan dinámicamente mediante JS -->
+                </div>
+
+            </section>
+
+            <p class="pie-pagina">
+                CLUB ATLÉTICO SPORTING · RESERVAS ONLINE
+            </p>
+
+        </main>
+    </div>
+
+    <!-- Script unificado dinámico -->
+    <script src="../js/horarios.js"></script>
+
+</body>
+</html>

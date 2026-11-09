@@ -31,12 +31,7 @@ body {
     text-align: center;
 }
 
-/* CABECERA */
-.cabecera {
-    text-align: center;
-    margin-bottom: 35px;
-}
-
+/* ESCUDO Y CABECERA */
 .escudo {
     width: 80px;
     margin: 0 auto 15px;
@@ -50,7 +45,7 @@ body {
 
 h1 {
     color: white;
-    font-size: 48px;
+    font-size: 42px;
     font-weight: 700;
     letter-spacing: 2px;
     margin-bottom: 5px;
@@ -66,23 +61,13 @@ h1 {
 .panel {
     width: 520px;
     max-width: 100%;
-    margin: auto;
+    margin: 20px auto 0;
     background: rgba(18, 18, 18, .82);
     border-radius: 24px;
     padding: 35px;
     backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, .08);
     box-shadow: 0 15px 45px rgba(0, 0, 0, .45);
-}
-
-.panel h2 {
-    color: white;
-    margin-bottom: 8px;
-}
-
-.descripcion {
-    color: #bdbdbd;
-    margin-bottom: 30px;
 }
 
 /* FECHA */
@@ -105,6 +90,8 @@ input[type="date"] {
     border-radius: 8px;
     font-size: 15px;
     text-align: center;
+    background-color: #222;
+    color: white;
 }
 
 .mensaje-error {
@@ -114,14 +101,19 @@ input[type="date"] {
     font-weight: 600;
 }
 
-/* HORARIOS */
+/* CONTENEDOR Y GRILLA DE HORARIOS */
+.contenedor-horarios {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
 .horario {
     background: rgba(255, 255, 255, .08);
     border: 1px solid rgba(255, 255, 255, .08);
     border-left: 5px solid #d32f2f;
     border-radius: 15px;
-    padding: 18px 22px;
-    margin-bottom: 18px;
+    padding: 16px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -130,7 +122,7 @@ input[type="date"] {
 }
 
 .horario:hover {
-    transform: translateY(-5px);
+    transform: translateY(-3px);
     box-shadow: 0 10px 25px rgba(0, 0, 0, .35);
     background: rgba(255, 255, 255, .12);
 }
@@ -141,21 +133,24 @@ input[type="date"] {
 
 .info h3 {
     color: white;
-    margin-bottom: 6px;
+    font-size: 18px;
+    margin-bottom: 4px;
 }
 
 .disponible {
     color: #5cff77;
     font-weight: bold;
+    font-size: 13px;
 }
 
-.reservado {
+.ocupado {
     color: #ff5b5b;
     font-weight: bold;
+    font-size: 13px;
 }
 
 /* BOTONES DE RESERVA */
-button {
+button, .btn-horario {
     background: linear-gradient(90deg, #c62828, #ff3b3b);
     color: white;
     border: none;
@@ -166,15 +161,16 @@ button {
     transition: .3s;
 }
 
-button:hover {
+button:hover, .btn-horario:hover {
     transform: translateY(-2px);
     box-shadow: 0 0 15px rgba(255, 0, 0, .35);
 }
 
-button:disabled {
+button:disabled, .btn-horario:disabled {
     background: #555;
     cursor: not-allowed;
     transform: none;
+    box-shadow: none;
 }
 
 /* VOLVER */
@@ -189,18 +185,14 @@ button:disabled {
     padding: 10px 18px;
     border-radius: 8px;
     transition: .3s;
-    z-index: 1000;
+    z-index: 900;
 }
 
 .boton-volver:hover {
     background: #c62828;
 }
 
-/* MENÚ HAMBURGUESA */
-#menu-toggle {
-    display: none;
-}
-
+/* MENÚ HAMBURGUESA Y LATERAL */
 .hamburguesa {
     position: fixed;
     top: 25px;
@@ -215,9 +207,11 @@ button:disabled {
     align-items: center;
     border-radius: 12px;
     cursor: pointer;
-    z-index: 1001;
+    z-index: 1005;
     transition: .3s;
     box-shadow: 0 5px 20px rgba(0, 0, 0, .35);
+    border: none;
+    user-select: none;
 }
 
 .hamburguesa:hover {
@@ -225,7 +219,6 @@ button:disabled {
     transform: scale(1.08);
 }
 
-/* MENÚ LATERAL */
 .menu-lateral {
     position: fixed;
     top: 0;
@@ -241,7 +234,8 @@ button:disabled {
     overflow-y: auto;
 }
 
-#menu-toggle:checked ~ .menu-lateral {
+/* CLASE QUE ACTIVA EL MENÚ DESDE JAVASCRIPT */
+.menu-lateral.abierto {
     left: 0;
 }
 
@@ -296,10 +290,6 @@ button:disabled {
 
     .panel {
         padding: 25px 15px;
-    }
-
-    .horario {
-        padding: 15px 12px;
     }
 
     .hamburguesa {
