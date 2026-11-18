@@ -33,6 +33,8 @@ document.addEventListener("DOMContentLoaded", function () {
         botonLogin.disabled = true;
         botonLogin.textContent = "INICIANDO SESIÓN...";
 
+        let loginExitoso = false; // Bandera para controlar el finally
+
         try {
             const respuesta = await fetch(
                 "http://localhost:8080/usuarios/login",
@@ -57,13 +59,13 @@ document.addEventListener("DOMContentLoaded", function () {
                         "error"
                     );
                 }
-                return;
+                return; // Acá sale, y el finally reactivará el botón porque falló
             }
 
             const data = await respuesta.json();
             console.log("Respuesta del login:", data);
 
-            // Acepta rol directo o dentro de un objeto
+            // Extraemos el rol de forma segura
             const rolOriginal =
                 typeof data.rol === "string"
                     ? data.rol
@@ -75,11 +77,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const rol = String(rolOriginal)
                 .toUpperCase()
-                .replace(/^ROLE_/, "");
+                .replace(/^ROLE_/, "")
+                .trim();
 
-            // Acepta ADMIN, USUARIO, USER o CLIENTE
+            console.log("Rol detectado:", rol);
+
             const esAdmin = rol === "ADMIN";
-            const esUsuario = rol === "USUARIO" || rol === "USER" || rol === "CLIENTE";
+            
+            // Si el rol viene vacío o es cualquier variante de usuario común, lo dejamos pasar
+            const esUsuario = rol === "USUARIO" || rol === "USER" || rol === "CLIENTE" || rol === "";
 
             if (!esAdmin && !esUsuario) {
                 mostrarMensaje(
@@ -87,18 +93,21 @@ document.addEventListener("DOMContentLoaded", function () {
                     "error"
                 );
                 console.warn("Formato de rol no reconocido:", data.rol);
-                return;
+                return; // Si el rol no es válido, sale y reactiva el botón
             }
 
-            // Guardar datos en el cliente para la interfaz
-            localStorage.setItem("usuario", JSON.stringify(data));
+            // Guardamos los datos en sessionStorage
+            sessionStorage.setItem("usuario", JSON.stringify(data));
 
             mostrarMensaje(
                 "¡Inicio de sesión exitoso!",
                 "exito"
             );
 
-            // Redirección según rol
+            // Marcamos que fue exitoso para que el finally NO prenda el botón de nuevo
+            loginExitoso = true;
+
+            // Redirección inmediata
             setTimeout(() => {
                 if (esAdmin) {
                     window.location.href = "admin.html";
@@ -109,16 +118,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
         } catch (error) {
             console.error("Error al iniciar sesión:", error);
-
             mostrarMensaje(
-                "No se pudo conectar con el servidor. " +
-                "Comprobá que Spring Boot esté funcionando.",
+                "No se pudo conectar con el servidor. Comprobá que Spring Boot esté funcionando.",
                 "error"
             );
-
         } finally {
-            botonLogin.disabled = false;
-            botonLogin.textContent = "INICIAR SESIÓN";
+            // Solo reactivamos el botón si el login falló o dio error. 
+            // Si fue exitoso, dejamos el botón deshabilitado mientras redirige.
+            if (!loginExitoso) {
+                botonLogin.disabled = false;
+                botonLogin.textContent = "INICIAR SESIÓN";
+            }
         }
     });
 

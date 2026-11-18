@@ -67,13 +67,32 @@ public class ReservaController {
         return ResponseEntity.ok().build();
     }
 
-    // Endpoint para que el usuario cancele su turno (Aplica validación de 4 horas y multas)
     @PutMapping("/cancelar-usuario/{id}")
     public ResponseEntity<?> cancelarReservaUsuario(@PathVariable Long id, @RequestParam Long idUsuario) {
         try {
             reservaService.cancelarReservaPorUsuario(id, idUsuario);
             return ResponseEntity.ok().body("Reserva cancelada exitosamente.");
         } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/cancelar-usuario-admin/{idReserva}")
+    public ResponseEntity<?> cancelarConMultaAdmin(@PathVariable Long idReserva, @RequestParam Long idUsuario) {
+        try {
+            reservaService.cancelarReservaConMulta(idReserva, idUsuario);
+            return ResponseEntity.ok().body("Reserva cancelada y multa aplicada con éxito.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/ausente/{idReserva}")
+    public ResponseEntity<?> registrarAusenciaAdmin(@PathVariable Long idReserva, @RequestParam Long idUsuario) {
+        try {
+            reservaService.registrarAusencia(idReserva, idUsuario);
+            return ResponseEntity.ok().body("Ausencia registrada y multa aplicada con éxito.");
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

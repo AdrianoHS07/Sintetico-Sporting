@@ -4,31 +4,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <link rel="stylesheet" href="../css/reserva_exitosa.css">
-
-    <title>Reserva Exitosa</title>
+    <title>Reserva Exitosa | Sintético Sporting</title>
 </head>
 
 <body>
 
-<input type="checkbox" id="menu-toggle">
+<!-- Botón Hamburguesa accionado por JavaScript -->
+<button type="button" class="hamburguesa" id="btn-hamburguesa" aria-label="Abrir menú" style="background: none; border: none;">☰</button>
 
-<label for="menu-toggle" class="hamburguesa">
-    ☰
-</label>
-
-<nav class="menu-lateral">
+<nav class="menu-lateral" id="menu-lateral">
 
     <div class="perfil">
-        <img src="../img/Escudo_del_Club_Atlético_Sporting.png">
+        <img src="../img/Escudo_del_Club_Atlético_Sporting.png" alt="Escudo Sporting">
         <h2>SINTÉTICO SPORTING</h2>
+        <p id="saludo-usuario" style="color: #fff; margin-top: 5px; font-size: 0.9em;"></p>
     </div>
 
-    <a href="index.html">🏠 Inicio</a>
     <a href="canchas.html">⚽ Reservar Cancha</a>
     <a href="mis_reservas.html">📅 Mis Reservas</a>
-    <a href="login.html">🚪 Cerrar Sesión</a>
+    <a href="mis_multas.html" style="color: #fbbf24;">⚠️ Mis Multas</a>
+    <a href="javascript:void(0)" id="btn-cerrar-sesion">🚪 Cerrar Sesión</a>
 
 </nav>
 
@@ -36,7 +32,7 @@
 
     <div class="contenedor">
 
-        <img src="../img/Escudo_del_Club_Atlético_Sporting.png" class="escudo">
+        <img src="../img/Escudo_del_Club_Atlético_Sporting.png" class="escudo" alt="Escudo Sporting">
 
         <div class="panel">
 
@@ -78,6 +74,41 @@
 </div>
 
 <script src="../js/reserva_exitosa.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const usuarioGuardado = sessionStorage.getItem("usuario");
+        if (usuarioGuardado) {
+            try {
+                const u = JSON.parse(usuarioGuardado);
+                const saludo = document.getElementById("saludo-usuario");
+                if (saludo) saludo.textContent = `Hola, ${u.nombre || u.email}`;
+            } catch(e) {}
+        }
+        
+        const btnSalir = document.getElementById("btn-cerrar-sesion");
+        if (btnSalir) {
+            btnSalir.addEventListener("click", function() {
+                sessionStorage.clear();
+                localStorage.removeItem("usuario");
+                window.location.href = "login.html";
+            });
+        }
+
+        const btnHamburguesa = document.getElementById("btn-hamburguesa");
+        const menuLateral = document.getElementById("menu-lateral");
+
+        if (btnHamburguesa && menuLateral) {
+            btnHamburguesa.addEventListener("click", function() {
+                const leftActual = window.getComputedStyle(menuLateral).left;
+                if (leftActual === "0px") {
+                    menuLateral.style.left = "-290px";
+                } else {
+                    menuLateral.style.left = "0px";
+                }
+            });
+        }
+    });
+</script>
 
 </body>
 

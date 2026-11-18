@@ -303,3 +303,15 @@ button:disabled, .btn-horario:disabled {
         padding-top: 85px;
     }
 }
+
+/* ESTILOS PARA TURNOS PENDIENTES DE PAGO */
+.pendiente {
+    color: #ffffff !important;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+/* Opcional: Hacer que la barra lateral izquierda del turno sea amarilla cuando esté pendiente */
+.horario.estado-pendiente {
+    border-left-color: #eab308;
+}

@@ -1,24 +1,34 @@
 document.addEventListener("DOMContentLoaded", async function () {
 
-    // 1. Capturar elementos del DOM
     const canchaReserva = document.getElementById("cancha-reserva");
     const fechaReserva = document.getElementById("fecha-reserva");
     const horarioReserva = document.getElementById("horario-reserva");
-    const modalidadReserva = document.getElementById("modalidad-reserva"); // Capturar elemento modalidad
+    const modalidadReserva = document.getElementById("modalidad-reserva");
     const btnMercadoPago = document.querySelector(".mercadopago");
     const btnVolverHorarios = document.getElementById("btn-volver-horarios");
 
-    // Obtener usuario logueado en localStorage
-    const usuarioGuardado = localStorage.getItem("usuario");
-    let idUsuario = 1;
-    if (usuarioGuardado) {
-        try {
-            const u = JSON.parse(usuarioGuardado);
-            idUsuario = u.idUsuario || u.id || 1;
-        } catch (e) {}
+    // OBTENER USUARIO DESDE sessionStorage CON VALIDACIÓN ESTRICTA (Sin ID por defecto 1)
+    const usuarioGuardado = sessionStorage.getItem("usuario");
+    
+    if (!usuarioGuardado) {
+        alert("No se encontró una sesión activa en esta pestaña. Por favor, iniciá sesión nuevamente.");
+        window.location.href = "login.html";
+        return;
     }
 
-    // 2. VERIFICACIÓN PREVIA DE SUSPENSIÓN AL CARGAR LA PÁGINA
+    let idUsuario = null;
+    try {
+        const u = JSON.parse(usuarioGuardado);
+        idUsuario = u.idUsuario || u.id;
+    } catch (e) {}
+
+    if (!idUsuario) {
+        alert("Datos de sesión inválidos. Volvé a iniciar sesión.");
+        window.location.href = "login.html";
+        return;
+    }
+
+    // VERIFICACIÓN PREVIA DE SUSPENSIÓN AL CARGAR LA PÁGINA
     try {
         const respuestaUser = await fetch(`http://localhost:8080/usuarios/${idUsuario}`);
         if (respuestaUser.ok) {
@@ -38,7 +48,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         console.error("Error al verificar suspensión del usuario:", error);
     }
 
-    // 3. Obtener datos de la reserva desde sessionStorage
     const reservaGuardada = sessionStorage.getItem("reservaSeleccionada");
 
     if (reservaGuardada) {
@@ -46,7 +55,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         if (canchaReserva) canchaReserva.textContent = "⚽ " + (reserva.cancha || "Cancha");
         if (horarioReserva) horarioReserva.textContent = reserva.horario || reserva.hora;
-        if (modalidadReserva) modalidadReserva.textContent = reserva.modalidad || "Fútbol 5"; // Mostrar la modalidad guardada
+        if (modalidadReserva) modalidadReserva.textContent = reserva.modalidad || "Fútbol 5";
 
         if (fechaReserva) {
             const partesFecha = reserva.fecha ? reserva.fecha.split("-") : [];
@@ -67,14 +76,12 @@ document.addEventListener("DOMContentLoaded", async function () {
         return;
     }
 
-    // Auxiliar para formatear la hora al estándar 'HH:mm:ss' exigido por Spring Boot
     function obtenerHoraFormateada(rangoHorario) {
         if (!rangoHorario) return "18:00:00";
         const horaInicio = rangoHorario.split("-")[0].trim();
         return horaInicio.length === 5 ? horaInicio + ":00" : horaInicio;
     }
 
-    // PASO 1: Enviar datos a Spring Boot para guardar la reserva en MySQL (Exclusivo para Mercado Pago)
     async function guardarReservaEnBD() {
         const reserva = JSON.parse(reservaGuardada);
         const horaValida = obtenerHoraFormateada(reserva.horario || reserva.hora);
@@ -112,7 +119,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
     }
 
-    // PASO 2: Evento al presionar el botón de pagar con Mercado Pago
     if (btnMercadoPago) {
         btnMercadoPago.addEventListener("click", async function (e) {
             e.preventDefault();
@@ -160,12 +166,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         });
     }
 
-    // PASO 3: Botón de transferencia bancaria (SOLO REDIRIGE, sin guardar en la BD todavía)
     const btnTransferencia = document.querySelector(".transferencia");
     if (btnTransferencia) {
         btnTransferencia.addEventListener("click", function (e) {
             e.preventDefault();
-            // Redirige a transferencia.html para que el usuario vea los datos bancarios
             window.location.href = "transferencia.html";
         });
     }

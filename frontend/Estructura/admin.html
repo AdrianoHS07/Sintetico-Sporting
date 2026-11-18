@@ -23,6 +23,9 @@
             <button type="button" id="btn-modificar-cancha" class="btn-modificar-cancha">
                 ⚙️ Modificar cancha
             </button>
+            <button type="button" id="btn-gestionar-multas" class="btn-principal" style="background: #b45309; width: 100%; border: none; padding: 12px; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; margin-top: 10px;">
+                ⚠️ Gestionar Multas
+            </button>
             <a href="login.html" style="display: block; text-align: center; text-decoration: none; background: #1e1e26; color: #fff; padding: 12px; border-radius: 8px; border: 1px solid #444; margin-top: 20px; font-size: 14px; transition: background 0.2s;">Volver al login</a>
         </nav>
     </aside>
@@ -216,6 +219,20 @@
                 <button type="button" id="cerrar-modal-ges" aria-label="Cerrar ventana">✕</button>
             </div>
             <div id="lista-canchas-container" style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;">
+                <!-- Se cargan dinámicamente -->
+            </div>
+        </div>
+    </div>
+
+    <!-- VENTANA GESTIONAR MULTAS -->
+    <div class="modal" id="modal-gestionar-multas" aria-hidden="true">
+        <div class="modal-contenido" role="dialog" aria-modal="true" aria-labelledby="titulo-modal-multas" style="max-width: 700px;">
+            <div class="modal-encabezado">
+                <h2 id="titulo-modal-multas">Gestión de Multas y Sanciones</h2>
+                <button type="button" id="cerrar-modal-multas" aria-label="Cerrar ventana">✕</button>
+            </div>
+            <p class="subtitulo" style="margin-top: 5px;">Listado de usuarios con penalizaciones o suspensiones activas.</p>
+            <div id="lista-multados-container" style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px; max-height: 400px; overflow-y: auto;">
                 <!-- Se cargan dinámicamente -->
             </div>
         </div>

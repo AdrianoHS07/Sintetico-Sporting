@@ -1,15 +1,10 @@
 document.addEventListener("DOMContentLoaded", function () {
 
-    // ==========================================
-    // 1. MENÚ LATERAL Y NAVEGACIÓN
-    // ==========================================
-
     const checkbox = document.getElementById("menu-toggle");
     const menu = document.querySelector(".menu-lateral");
     const botonMenu = document.querySelector(".hamburguesa");
     const btnVolverArriba = document.getElementById("btn-volver-arriba");
 
-    // Asegurar apertura/cierre interactivo si el botón hamburguesa es un label o botón común
     if (botonMenu && checkbox) {
         botonMenu.addEventListener("click", function () {
             setTimeout(() => {
@@ -22,7 +17,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Cerrar menú al hacer clic fuera de él
     document.addEventListener("click", function (evento) {
         if (!checkbox || !checkbox.checked) return;
 
@@ -42,10 +36,6 @@ document.addEventListener("DOMContentLoaded", function () {
             link.classList.add("activo");
         }
     });
-
-    // ==========================================
-    // 2. RECUPERAR RESERVA
-    // ==========================================
 
     const reservaGuardada = sessionStorage.getItem("reservaSeleccionada");
 
@@ -110,10 +100,6 @@ document.addEventListener("DOMContentLoaded", function () {
         })
     );
 
-    // ==========================================
-    // 3. COPIAR DATOS BANCARIOS
-    // ==========================================
-
     document.querySelectorAll(".btn-copiar").forEach(function (boton) {
 
         boton.addEventListener("click", async function () {
@@ -143,10 +129,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     });
 
-    // ==========================================
-    // 4. GUARDAR RESERVA EN MYSQL Y MOSTRAR PENDIENTE (AL CLICKEAR EL BOTÓN FINAL)
-    // ==========================================
-
     const botonTransferencia = document.getElementById("btn-transferencia");
     const panelTransferencia = document.getElementById("panel-transferencia");
     const panelPendiente = document.getElementById("panel-pendiente");
@@ -157,28 +139,37 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (mensajeError) mensajeError.hidden = true;
 
+            // OBTENER USUARIO DESDE sessionStorage CON VALIDACIÓN ESTRICTA
+            const usuarioGuardado = sessionStorage.getItem("usuario");
+            
+            if (!usuarioGuardado) {
+                alert("No se encontró una sesión activa. Iniciá sesión nuevamente.");
+                window.location.href = "login.html";
+                return;
+            }
+
+            let idUsuario = null;
+            try {
+                const u = JSON.parse(usuarioGuardado);
+                idUsuario = u.idUsuario || u.id;
+            } catch (e) {}
+
+            if (!idUsuario) {
+                alert("ID de usuario inválido. Iniciá sesión otra vez.");
+                window.location.href = "login.html";
+                return;
+            }
+
             const confirmar = window.confirm(
                 "¿Ya realizaste la transferencia bancaria?\n\n" +
-                "Tu pago quedará pendiente de verificación por el administrador."
+                "Tu turno quedará bloqueado temporalmente y el administrador deberá verificar el pago para confirmarlo."
             );
 
             if (!confirmar) return;
 
-            // Deshabilitar el botón mientras se procesa la solicitud
             botonTransferencia.disabled = true;
             const textoOriginal = botonTransferencia.textContent;
             botonTransferencia.textContent = "⏳ REGISTRANDO RESERVA...";
-
-            // Obtener ID del usuario desde localStorage si está logueado
-            const usuarioGuardado = localStorage.getItem("usuario");
-            let idUsuario = 1;
-
-            if (usuarioGuardado) {
-                try {
-                    const u = JSON.parse(usuarioGuardado);
-                    idUsuario = u.idUsuario || u.id || 1;
-                } catch (e) {}
-            }
 
             const idCanchaValido = Number(reserva.idCancha) || (String(reserva.cancha).includes("2") ? 2 : 1);
             const horaValida = obtenerHoraFormateada(reserva.horario || reserva.hora);
@@ -189,7 +180,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 precio: precio,
                 estado: "PENDIENTE_PAGO",
                 cancha: { idCancha: idCanchaValido },
-                usuario: { idUsuario: idUsuario }
+                usuario: { idUsuario: idUsuario } // ID estricto del usuario actual de la pestaña
             };
 
             try {
@@ -201,24 +192,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 if (respuesta.ok) {
                     const dataReserva = await respuesta.json();
-                    console.log("Reserva registrada con éxito en MySQL:", dataReserva);
+                    console.log("Reserva registrada como PENDIENTE_PAGO:", dataReserva);
 
                     escribirTexto("resultado-cancha", cancha);
                     escribirTexto("resultado-fecha", fecha);
                     escribirTexto("resultado-horario", horario);
 
-                    // Ocultar vista de datos y mostrar panel de pendiente
                     if (panelTransferencia) panelTransferencia.hidden = true;
                     if (panelPendiente) panelPendiente.hidden = false;
 
-                    // Redirigir botón de arriba hacia el menú de canchas
                     if (btnVolverArriba) {
                         btnVolverArriba.href = "canchas.html";
                     }
 
                     window.scrollTo({ top: 0, behavior: "smooth" });
 
-                    // Limpiar la reserva guardada de la memoria temporal
                     sessionStorage.removeItem("reservaSeleccionada");
 
                 } else {

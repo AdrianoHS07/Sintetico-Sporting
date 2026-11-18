@@ -9,22 +9,25 @@
 </head>
 <body>
 
-    <input type="checkbox" id="menu-toggle">
-    <label for="menu-toggle" class="hamburguesa" aria-label="Abrir menú">☰</label>
+    <!-- Botón Hamburguesa accionado por JavaScript -->
+    <button type="button" class="hamburguesa" id="btn-hamburguesa" aria-label="Abrir menú" style="background: none; border: none;">☰</button>
 
-    <!-- Botón de retorno reconfigurable -->
-    <a href="confirmar.html" id="btn-volver-arriba" class="boton-volver">← Volver</a>
-
-    <nav class="menu-lateral">
+    <!-- Menú Lateral -->
+    <nav class="menu-lateral" id="menu-lateral">
         <div class="perfil">
             <img src="../img/Escudo_del_Club_Atlético_Sporting.png" alt="Escudo Sporting">
             <h2>SINTÉTICO SPORTING</h2>
+            <p id="saludo-usuario" style="color: #fff; margin-top: 5px; font-size: 0.9em;"></p>
         </div>
 
         <a href="canchas.html">⚽ Reservar Cancha</a>
         <a href="mis_reservas.html">📅 Mis Reservas</a>
-        <a href="login.html">🚪 Cerrar Sesión</a>
+        <a href="mis_multas.html" style="color: #fbbf24;">⚠️ Mis Multas</a>
+        <a href="javascript:void(0)" id="btn-cerrar-sesion">🚪 Cerrar Sesión</a>
     </nav>
+
+    <!-- Botón de retorno -->
+    <a href="confirmar.html" id="btn-volver-arriba" class="boton-volver">← Volver</a>
 
     <div class="overlay">
         <main class="contenedor">
@@ -38,7 +41,7 @@
 
                 <h1>Transferencia bancaria</h1>
                 <p class="subtitulo">
-                    Revisá tu reserva y transferí al siguiente destino.
+                    Revisá tu reserva y transferí al siguiente destino. Tenés 15 minutos para informar el pago.
                 </p>
 
                 <div class="resumen">
@@ -108,9 +111,9 @@
                 <div class="aviso">
                     <strong>Importante</strong>
                     <p>
-                        Informar que realizaste una transferencia
-                        no significa que el pago esté confirmado.
-                        El administrador deberá verificarlo.
+                        Si no informas la transferencia en los próximos 15 minutos,
+                        el turno se liberará automáticamente para otros usuarios.
+                        El administrador deberá validar el ingreso para confirmar definitivamente tu reserva.
                     </p>
                 </div>
 
@@ -130,10 +133,10 @@
 
                 <div class="icono-pendiente">⏳</div>
 
-                <h1>Transferencia pendiente</h1>
+                <h1>Reserva pendiente de validación</h1>
 
                 <p class="subtitulo">
-                    Registramos tu aviso de transferencia.
+                    Registramos tu aviso de transferencia bancaria.
                 </p>
 
                 <div class="estado-pendiente">
@@ -141,8 +144,8 @@
                 </div>
 
                 <p class="explicacion">
-                    El administrador deberá comprobar que el pago
-                    haya ingresado antes de confirmar tu reserva.
+                    El turno quedó reservado temporalmente por 15 minutos. 
+                    El administrador comprobará el pago y confirmará tu turno definitivamente en breve.
                 </p>
 
                 <div class="resumen">
@@ -175,5 +178,41 @@
         </main>
     </div>
 
+    <!-- Script de sesión y menú hamburguesa -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const usuarioGuardado = sessionStorage.getItem("usuario");
+            if (usuarioGuardado) {
+                try {
+                    const u = JSON.parse(usuarioGuardado);
+                    const saludo = document.getElementById("saludo-usuario");
+                    if (saludo) saludo.textContent = `Hola, ${u.nombre || u.email}`;
+                } catch(e) {}
+            }
+            
+            const btnSalir = document.getElementById("btn-cerrar-sesion");
+            if (btnSalir) {
+                btnSalir.addEventListener("click", function() {
+                    sessionStorage.clear();
+                    localStorage.removeItem("usuario");
+                    window.location.href = "login.html";
+                });
+            }
+
+            const btnHamburguesa = document.getElementById("btn-hamburguesa");
+            const menuLateral = document.getElementById("menu-lateral");
+
+            if (btnHamburguesa && menuLateral) {
+                btnHamburguesa.addEventListener("click", function() {
+                    const leftActual = window.getComputedStyle(menuLateral).left;
+                    if (leftActual === "0px") {
+                        menuLateral.style.left = "-290px";
+                    } else {
+                        menuLateral.style.left = "0px";
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>
