@@ -1,429 +1,218 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Transferencia Bancaria</title>
-
-<style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Poppins',sans-serif;
-}
-
-body{
-
-background:url("img/CANCHOTAAAAA.png");
-
-background-size:cover;
-background-position:center;
-background-repeat:no-repeat;
-
-}
-
-.overlay{
-
-width:100%;
-min-height:100vh;
-
-background:rgba(0,0,0,.65);
-
-display:flex;
-justify-content:center;
-align-items:center;
-
-padding:30px;
-
-}
-
-.contenedor{
-
-width:100%;
-max-width:600px;
-
-}
-
-.escudo{
-
-width:90px;
-display:block;
-margin:auto;
-margin-bottom:20px;
-
-}
-
-.panel{
-
-background:rgba(20,20,20,.85);
-
-padding:35px;
-
-border-radius:20px;
-
-box-shadow:0 15px 35px rgba(0,0,0,.45);
-
-text-align:center;
-
-}
-
-h1{
-
-color:white;
-
-margin-bottom:25px;
-
-}
-
-.dato{
-
-background:rgba(255,255,255,.08);
-
-padding:15px;
-
-border-radius:12px;
-
-margin-bottom:15px;
-
-text-align:left;
-
-}
-
-.dato h3{
-
-color:white;
-
-margin-bottom:8px;
-
-}
-
-.dato p{
-
-color:#ddd;
-
-}
-
-.precio{
-
-font-size:40px;
-
-font-weight:bold;
-
-color:#00d26a;
-
-margin:20px 0;
-
-}
-
-.qr{
-
-width:220px;
-
-border-radius:15px;
-
-margin:25px auto;
-
-display:block;
-
-background:white;
-
-padding:10px;
-
-}
-
-button{
-
-width:100%;
-
-padding:15px;
-
-border:none;
-
-border-radius:10px;
-
-background:#00a651;
-
-color:white;
-
-font-size:18px;
-
-font-weight:bold;
-
-cursor:pointer;
-
-transition:.3s;
-
-}
-
-button:hover{
-
-background:#008943;
-
-transform:scale(1.03);
-
-}
-
-.volver{
-
-position:fixed;
-
-top:25px;
-
-left:25px;
-
-width:50px;
-
-height:50px;
-
-background:rgba(20,20,20,.9);
-
-color:white;
-
-border-radius:50%;
-
-display:flex;
-
-justify-content:center;
-
-align-items:center;
-
-text-decoration:none;
-
-font-size:28px;
-
-}
-/* ---------------------- */
-/* MENÚ HAMBURGUESA */
-/* ---------------------- */
-
-#menu-toggle{
-
-display:none;
-
-}
-
-.hamburguesa{
-
-position:fixed;
-
-top:25px;
-
-left:25px;
-
-width:55px;
-
-height:55px;
-
-background:#c62828;
-
-color:white;
-
-font-size:30px;
-
-display:flex;
-
-justify-content:center;
-
-align-items:center;
-
-border-radius:12px;
-
-cursor:pointer;
-
-z-index:1001;
-
-transition:.3s;
-
-box-shadow:0 5px 20px rgba(0,0,0,.35);
-
-}
-
-.hamburguesa:hover{
-
-background:#e53935;
-
-transform:scale(1.08);
-
-}
-
-.menu-lateral{
-
-position:fixed;
-
-top:0;
-
-left:-300px;
-
-width:280px;
-
-height:100%;
-
-background:#171717;
-
-transition:.35s;
-
-padding-top:30px;
-
-box-shadow:10px 0 30px rgba(0,0,0,.45);
-
-z-index:1000;
-
-}
-
-#menu-toggle:checked ~ .menu-lateral{
-
-left:0;
-
-}
-
-.perfil{
-
-text-align:center;
-
-margin-bottom:40px;
-
-}
-
-.perfil img{
-
-width:90px;
-
-margin-bottom:10px;
-
-}
-
-.perfil h2{
-
-color:white;
-
-font-size:22px;
-
-}
-
-.menu-lateral a{
-
-display:block;
-
-padding:18px 30px;
-
-color:white;
-
-text-decoration:none;
-
-font-size:18px;
-
-transition:.3s;
-
-}
-
-.menu-lateral a:hover{
-
-background:#c62828;
-
-padding-left:40px;
-
-}
-
-</style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transferencia Bancaria | Sintético Sporting</title>
+    <link rel="stylesheet" href="../css/transferencia.css">
+    <script src="../js/transferencia.js" defer></script>
 </head>
-
 <body>
 
-<input type="checkbox" id="menu-toggle">
+    <!-- Botón Hamburguesa accionado por JavaScript -->
+    <button type="button" class="hamburguesa" id="btn-hamburguesa" aria-label="Abrir menú" style="background: none; border: none;">☰</button>
 
-<label for="menu-toggle" class="hamburguesa">
-☰
-</label>
+    <!-- Menú Lateral -->
+    <nav class="menu-lateral" id="menu-lateral">
+        <div class="perfil">
+            <img src="../img/Escudo_del_Club_Atlético_Sporting.png" alt="Escudo Sporting">
+            <h2>SINTÉTICO SPORTING</h2>
+            <p id="saludo-usuario" style="color: #fff; margin-top: 5px; font-size: 0.9em;"></p>
+        </div>
 
-<nav class="menu-lateral">
+        <a href="canchas.html">⚽ Reservar Cancha</a>
+        <a href="mis_reservas.html">📅 Mis Reservas</a>
+        <a href="mis_multas.html" style="color: #fbbf24;">⚠️ Mis Multas</a>
+        <a href="javascript:void(0)" id="btn-cerrar-sesion">🚪 Cerrar Sesión</a>
+    </nav>
 
-<div class="perfil">
+    <!-- Botón de retorno -->
+    <a href="confirmar.html" id="btn-volver-arriba" class="boton-volver">← Volver</a>
 
-<img src="img/Escudo_del_Club_Atlético_Sporting.png">
+    <div class="overlay">
+        <main class="contenedor">
 
-<h2>SINTÉTICO SPORTING</h2>
+            <img src="../img/Escudo_del_Club_Atlético_Sporting.png"
+                 class="escudo"
+                 alt="Club Atlético Sporting">
 
-</div>
+            <section class="panel" id="panel-transferencia">
+                <div class="icono-principal">🏦</div>
 
-<a href="index.html">🏠 Inicio</a>
+                <h1>Transferencia bancaria</h1>
+                <p class="subtitulo">
+                    Revisá tu reserva y transferí al siguiente destino. Tenés 15 minutos para informar el pago.
+                </p>
 
-<a href="canchas.html">⚽ Reservar Cancha</a>
+                <div class="resumen">
+                    <h2>⚽ TU RESERVA</h2>
 
-<a href="mis_reservas.html">📅 Mis Reservas</a>
+                    <div class="fila">
+                        <span>Cancha</span>
+                        <strong id="cancha-reserva">-</strong>
+                    </div>
 
-<a href="#">👤 Mi Perfil</a>
+                    <div class="fila">
+                        <span>Fecha</span>
+                        <strong id="fecha-reserva">-</strong>
+                    </div>
 
-<a href="#">⚙ Configuración</a>
+                    <div class="fila">
+                        <span>Horario</span>
+                        <strong id="horario-reserva">-</strong>
+                    </div>
+                </div>
 
-<a href="login.html">🚪 Cerrar Sesión</a>
+                <div class="precio">
+                    <small>IMPORTE A TRANSFERIR</small>
+                    <strong id="precio-reserva">$20.000</strong>
+                </div>
 
-</nav>
+                <div class="datos-bancarios">
+                    <h2>DATOS BANCARIOS</h2>
 
-<div class="overlay">
+                    <div class="dato">
+                        <h3>Alias</h3>
+                        <div class="dato-copiable">
+                            <p id="alias-bancario">SPORTING.CANCHAS</p>
+                            <button type="button"
+                                    class="btn-copiar"
+                                    data-copiar="alias-bancario">
+                                Copiar
+                            </button>
+                        </div>
+                    </div>
 
-<div class="contenedor">
+                    <div class="dato">
+                        <h3>CBU</h3>
+                        <div class="dato-copiable">
+                            <p id="cbu-bancario">0000003100000000000000</p>
+                            <button type="button"
+                                    class="btn-copiar"
+                                    data-copiar="cbu-bancario">
+                                Copiar
+                            </button>
+                        </div>
+                    </div>
 
-<img src="img/Escudo_del_Club_Atlético_Sporting.png" class="escudo">
+                    <div class="dato">
+                        <h3>Titular</h3>
+                        <p>Club Atlético Sporting</p>
+                    </div>
+                </div>
 
-<div class="panel">
+                <div class="qr-contenedor">
+                    <p>También podés utilizar este QR</p>
+                    <img src="../img/qr.jpeg"
+                         class="qr"
+                         alt="Código QR para transferencia bancaria">
+                </div>
 
-<h1>🏦 Transferencia Bancaria</h1>
+                <div class="aviso">
+                    <strong>Importante</strong>
+                    <p>
+                        Si no informas la transferencia en los próximos 15 minutos,
+                        el turno se liberará automáticamente para otros usuarios.
+                        El administrador deberá validar el ingreso para confirmar definitivamente tu reserva.
+                    </p>
+                </div>
 
-<div class="precio">
+                <button type="button"
+                        id="btn-transferencia"
+                        class="btn-principal">
+                    ✔ YA REALICÉ LA TRANSFERENCIA
+                </button>
 
-$20.000
+                <p id="mensaje-error" class="mensaje-error" hidden></p>
+            </section>
 
-</div>
+            <section class="panel panel-resultado"
+                     id="panel-pendiente"
+                     hidden
+                     aria-live="polite">
 
-<div class="dato">
+                <div class="icono-pendiente">⏳</div>
 
-<h3>Alias</h3>
+                <h1>Reserva pendiente de validación</h1>
 
-<p>SPORTING.CANCHAS</p>
+                <p class="subtitulo">
+                    Registramos tu aviso de transferencia bancaria.
+                </p>
 
-</div>
+                <div class="estado-pendiente">
+                    PENDIENTE DE VERIFICACIÓN
+                </div>
 
-<div class="dato">
+                <p class="explicacion">
+                    El turno quedó reservado temporalmente por 15 minutos. 
+                    El administrador comprobará el pago y confirmará tu turno definitivamente en breve.
+                </p>
 
-<h3>CBU</h3>
+                <div class="resumen">
+                    <div class="fila">
+                        <span>Cancha</span>
+                        <strong id="resultado-cancha">-</strong>
+                    </div>
 
-<p>0000003100000000000000</p>
+                    <div class="fila">
+                        <span>Fecha</span>
+                        <strong id="resultado-fecha">-</strong>
+                    </div>
 
-</div>
+                    <div class="fila">
+                        <span>Horario</span>
+                        <strong id="resultado-horario">-</strong>
+                    </div>
+                </div>
 
-<div class="dato">
+                <a href="canchas.html" class="btn-principal enlace-boton">
+                    ⚽ VOLVER A LAS CANCHAS
+                </a>
 
-<h3>Titular</h3>
+            </section>
 
-<p>Club Atlético Sporting</p>
+            <p class="pie-pagina">
+                CLUB ATLÉTICO SPORTING · RESERVAS ONLINE
+            </p>
 
-</div>
+        </main>
+    </div>
 
-<img src="img/qr.jpeg" class="qr">
+    <!-- Script de sesión y menú hamburguesa -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const usuarioGuardado = sessionStorage.getItem("usuario");
+            if (usuarioGuardado) {
+                try {
+                    const u = JSON.parse(usuarioGuardado);
+                    const saludo = document.getElementById("saludo-usuario");
+                    if (saludo) saludo.textContent = `Hola, ${u.nombre || u.email}`;
+                } catch(e) {}
+            }
+            
+            const btnSalir = document.getElementById("btn-cerrar-sesion");
+            if (btnSalir) {
+                btnSalir.addEventListener("click", function() {
+                    sessionStorage.clear();
+                    localStorage.removeItem("usuario");
+                    window.location.href = "login.html";
+                });
+            }
 
-<a href="reserva_exitosa.html">
+            const btnHamburguesa = document.getElementById("btn-hamburguesa");
+            const menuLateral = document.getElementById("menu-lateral");
 
-<button>
-
-✔ YA REALICÉ LA TRANSFERENCIA
-
-</button>
-
-</a>
-
-</div>
-
-</div>
-
-</div>
-
+            if (btnHamburguesa && menuLateral) {
+                btnHamburguesa.addEventListener("click", function() {
+                    const leftActual = window.getComputedStyle(menuLateral).left;
+                    if (leftActual === "0px") {
+                        menuLateral.style.left = "-290px";
+                    } else {
+                        menuLateral.style.left = "0px";
+                    }
+                });
+            }
+        });
+    </script>
 </body>
-
 </html>

@@ -1,0 +1,395 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    background: #101014;
+    color: #ffffff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+/* MENÚ */
+
+#menu-toggle {
+    display: none;
+}
+
+.hamburguesa {
+    position: fixed;
+    top: 20px;
+    left: 22px;
+    z-index: 1100;
+    font-size: 28px;
+    cursor: pointer;
+    color: white;
+}
+
+.menu-lateral {
+    position: fixed;
+    top: 0;
+    left: -290px;
+    width: 270px;
+    height: 100vh;
+    background: #17171d;
+    z-index: 1050;
+    padding: 75px 20px 30px;
+    box-shadow: 5px 0 30px #0008;
+    transition: left 0.3s ease;
+    overflow-y: auto;
+}
+
+#menu-toggle:checked ~ .menu-lateral {
+    left: 0;
+}
+
+.perfil {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.perfil img {
+    width: 85px;
+}
+
+.perfil h2 {
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+.menu-lateral a {
+    display: block;
+    padding: 14px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: white;
+    transition: background 0.2s;
+}
+
+.menu-lateral a:hover,
+.menu-lateral a.activo {
+    background: #b71c1c;
+}
+
+.boton-volver {
+    position: fixed;
+    top: 25px;
+    right: 25px;
+    color: white;
+    text-decoration: none;
+    z-index: 1000;
+    font-weight: bold;
+}
+
+/* CONTENIDO */
+
+.overlay {
+    min-height: 100vh;
+    padding: 45px 18px;
+    background:
+        radial-gradient(circle at top, #56101755, transparent 55%),
+        #101014;
+}
+
+.contenedor {
+    width: 100%;
+    max-width: 540px;
+    margin: auto;
+    text-align: center;
+}
+
+.escudo {
+    width: 90px;
+    margin-bottom: 20px;
+}
+
+.panel {
+    padding: 32px 25px;
+    border-radius: 18px;
+    background: #1b1b22;
+    border: 1px solid #383840;
+    box-shadow: 0 12px 40px #0007;
+}
+
+.icono-principal,
+.icono-pendiente {
+    font-size: 45px;
+    margin-bottom: 12px;
+}
+
+h1 {
+    font-size: 27px;
+    margin-bottom: 10px;
+}
+
+.subtitulo {
+    color: #bcbcc5;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+/* RESUMEN */
+
+.resumen {
+    background: #121217;
+    border: 1px solid #33333b;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 22px;
+    text-align: left;
+}
+
+.resumen h2,
+.datos-bancarios h2 {
+    font-size: 13px;
+    letter-spacing: 1px;
+    margin-bottom: 17px;
+    color: #ff5252;
+}
+
+.fila {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 11px 0;
+    border-bottom: 1px solid #303038;
+    font-size: 14px;
+}
+
+.fila:last-child {
+    border-bottom: none;
+}
+
+.fila span {
+    color: #aaaaaf;
+}
+
+.fila strong {
+    text-align: right;
+}
+
+/* PRECIO */
+
+.precio {
+    background: linear-gradient(135deg, #941818, #cf2020);
+    border-radius: 12px;
+    padding: 22px;
+    margin-bottom: 24px;
+}
+
+.precio small {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    margin-bottom: 8px;
+}
+
+.precio strong {
+    font-size: 35px;
+}
+
+/* DATOS BANCARIOS */
+
+.datos-bancarios {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.dato {
+    background: #121217;
+    border: 1px solid #34343c;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 12px;
+}
+
+.dato h3 {
+    color: #aaaaaf;
+    font-size: 12px;
+    margin-bottom: 8px;
+}
+
+.dato p {
+    font-size: 15px;
+    overflow-wrap: anywhere;
+}
+
+.dato-copiable {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.btn-copiar {
+    background: #33333c;
+    border: 0;
+    border-radius: 7px;
+    padding: 9px 12px;
+    color: white;
+    cursor: pointer;
+}
+
+.btn-copiar:hover {
+    background: #4b4b56;
+}
+
+/* QR */
+
+.qr-contenedor {
+    margin: 20px 0;
+}
+
+.qr-contenedor p {
+    font-size: 13px;
+    color: #bcbcc5;
+    margin-bottom: 12px;
+}
+
+.qr {
+    width: 180px;
+    max-width: 100%;
+    border-radius: 10px;
+    background: white;
+    padding: 8px;
+}
+
+/* AVISO */
+
+.aviso {
+    background: #392d17;
+    border: 1px solid #816020;
+    border-radius: 10px;
+    padding: 15px;
+    margin: 22px 0;
+    text-align: left;
+}
+
+.aviso strong {
+    color: #ffd36c;
+}
+
+.aviso p {
+    font-size: 13px;
+    line-height: 1.6;
+    margin-top: 6px;
+    color: #e5d6b7;
+}
+
+/* BOTONES */
+
+.btn-principal {
+    display: block;
+    width: 100%;
+    background: #c21f2b;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 17px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-principal:hover {
+    background: #e12a37;
+}
+
+.btn-principal:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.enlace-boton {
+    text-decoration: none;
+    margin-top: 22px;
+}
+
+.enlace-inicio {
+    display: inline-block;
+    margin-top: 20px;
+    color: #dddddd;
+    text-decoration: none;
+}
+
+.enlace-inicio:hover {
+    text-decoration: underline;
+}
+
+/* RESULTADO */
+
+.estado-pendiente {
+    display: inline-block;
+    background: #473514;
+    color: #ffd36c;
+    border: 1px solid #816020;
+    padding: 12px 16px;
+    border-radius: 25px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.explicacion {
+    color: #dddddd;
+    line-height: 1.7;
+    font-size: 14px;
+    margin-bottom: 25px;
+}
+
+.nota-demo {
+    color: #aaaaaf;
+    font-size: 12px;
+    line-height: 1.6;
+    margin-top: 20px;
+}
+
+.mensaje-error {
+    color: #ff8585;
+    margin-top: 12px;
+    font-size: 13px;
+}
+
+.pie-pagina {
+    margin-top: 25px;
+    color: #777780;
+    font-size: 11px;
+    letter-spacing: 1px;
+}
+
+/* CELULARES */
+
+@media (max-width: 600px) {
+    .overlay {
+        padding: 85px 14px 30px;
+    }
+
+    .panel {
+        padding: 24px 16px;
+    }
+
+    h1 {
+        font-size: 23px;
+    }
+
+    .precio strong {
+        font-size: 30px;
+    }
+
+    .fila {
+        font-size: 13px;
+    }
+
+    .qr {
+        width: 155px;
+    }
+}

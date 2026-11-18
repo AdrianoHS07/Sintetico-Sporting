@@ -1,0 +1,195 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    background: #101014;
+    color: #ffffff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* MENÚ LATERAL */
+.hamburguesa {
+    position: fixed;
+    top: 20px;
+    left: 22px;
+    z-index: 1100;
+    font-size: 28px;
+    cursor: pointer;
+    color: white;
+}
+
+.menu-lateral {
+    position: fixed;
+    top: 0;
+    left: -290px;
+    width: 270px;
+    height: 100vh;
+    background: #17171d;
+    z-index: 1050;
+    padding: 75px 20px 30px;
+    box-shadow: 5px 0 30px #0008;
+    transition: left 0.3s ease;
+    overflow-y: auto;
+}
+
+.perfil {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.perfil img {
+    width: 85px;
+}
+
+.perfil h2 {
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+.menu-lateral a {
+    display: block;
+    padding: 14px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: white;
+    transition: background 0.2s;
+}
+
+.menu-lateral a:hover,
+.menu-lateral a.activo {
+    background: #b71c1c;
+}
+
+/* CONTENIDO PRINCIPAL */
+.overlay {
+    min-height: 100vh;
+    padding: 45px 18px;
+    background:
+        radial-gradient(circle at top, #56101755, transparent 55%),
+        #101014;
+}
+
+.contenedor {
+    width: 100%;
+    max-width: 600px;
+    margin: auto;
+    text-align: center;
+}
+
+.escudo {
+    width: 90px;
+    margin-bottom: 20px;
+}
+
+h1 {
+    font-size: 27px;
+    margin-bottom: 10px;
+}
+
+.subtitulo {
+    color: #bcbcc5;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+/* PANEL DE ALERTA (SUSPENSIÓN) */
+.panel-alerta {
+    display: flex;
+    align-items: center;
+    background: #112e1f;
+    border: 1px solid #1e5e3d;
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 25px;
+    text-align: left;
+    gap: 15px;
+}
+
+.panel-alerta.suspendido {
+    background: #361414;
+    border-color: #8c2626;
+}
+
+.icono-alerta {
+    font-size: 30px;
+}
+
+.texto-alerta h3 {
+    font-size: 13px;
+    letter-spacing: 1px;
+    color: #4ade80;
+    margin-bottom: 5px;
+}
+
+.panel-alerta.suspendido .texto-alerta h3 {
+    color: #f87171;
+}
+
+.texto-alerta p {
+    font-size: 14px;
+    color: #cbd5e1;
+}
+
+/* PANEL GENERAL */
+.panel {
+    padding: 32px 25px;
+    border-radius: 18px;
+    background: #1b1b22;
+    border: 1px solid #383840;
+    box-shadow: 0 12px 40px #0007;
+    text-align: left;
+}
+
+.panel h2 {
+    font-size: 14px;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+    color: #ff5252;
+    border-bottom: 1px solid #303038;
+    padding-bottom: 10px;
+}
+
+/* LISTA DE MULTAS */
+.item-multa {
+    background: #121217;
+    border: 1px solid #303038;
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 12px;
+}
+
+.fecha-multa {
+    font-size: 12px;
+    color: #fbbf24;
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+
+.motivo-multa {
+    font-size: 14px;
+    color: #e2e8f0;
+}
+
+.pie-pagina {
+    margin-top: 25px;
+    color: #777780;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-align: center;
+}
+
+/* CELULARES */
+@media (max-width: 600px) {
+    .overlay {
+        padding: 85px 14px 30px;
+    }
+    .panel {
+        padding: 24px 16px;
+    }
+}

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/mis_multas.css">
+    <title>Mis Multas e Infracciones | Sintético Sporting</title>
+</head>
+
+<body>
+
+    <!-- Botón Hamburguesa accionado por JavaScript -->
+    <button type="button" class="hamburguesa" id="btn-hamburguesa" aria-label="Abrir menú" style="background: none; border: none;">☰</button>
+
+    <!-- Menú Lateral -->
+    <nav class="menu-lateral" id="menu-lateral">
+        <div class="perfil">
+            <img src="../img/Escudo_del_Club_Atlético_Sporting.png" alt="Escudo Sporting">
+            <h2>SINTÉTICO SPORTING</h2>
+            <p id="saludo-usuario" style="color: #fff; margin-top: 5px; font-size: 0.9em;"></p>
+        </div>
+
+        <a href="canchas.html">⚽ Reservar Cancha</a>
+        <a href="mis_reservas.html">📅 Mis Reservas</a>
+        <a href="mis_multas.html" class="activo" style="color: #fbbf24;">⚠️ Mis Multas</a>
+        <a href="javascript:void(0)" id="btn-cerrar-sesion">🚪 Cerrar Sesión</a>
+    </nav>
+
+    <div class="overlay">
+        <main class="contenedor">
+
+            <img src="../img/Escudo_del_Club_Atlético_Sporting.png" class="escudo" alt="Escudo Sporting">
+
+            <h1>MIS MULTAS E INFRACCIONES</h1>
+            <p class="subtitulo">
+                Historial de cancelaciones fuera de término e inasistencias registradas.
+            </p>
+
+            <!-- Panel de Estado de Suspensión -->
+            <div id="estado-suspension" class="panel-alerta activo">
+                <div class="icono-alerta">✅</div>
+                <div class="texto-alerta">
+                    <h3>ESTADO DE LA CUENTA</h3>
+                    <p id="texto-estado">Tu cuenta se encuentra activa y habilitada para realizar reservas.</p>
+                </div>
+            </div>
+
+            <!-- Panel de Historial de Multas -->
+            <section class="panel">
+                <h2>HISTORIAL DE INFRACCIONES</h2>
+                
+                <div id="contenedor-multas">
+                    <p style="color: #94a3b8; text-align: center; padding: 20px;">Cargando historial...</p>
+                </div>
+            </section>
+
+            <p class="pie-pagina">
+                CLUB ATLÉTICO SPORTING · RESERVAS ONLINE
+            </p>
+
+        </main>
+    </div>
+
+    <!-- Script de lógica de multas y menú -->
+    <script src="../js/mis_multas.js"></script>
+
+</body>
+</html>

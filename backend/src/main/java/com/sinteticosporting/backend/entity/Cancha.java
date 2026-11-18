@@ -7,6 +7,8 @@ import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Entity
 @Getter
 @Setter
@@ -14,7 +16,13 @@ public class Cancha {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idCancha;
+    
     private int numero;
+    private String modalidad; // Ej: Fútbol 5, Fútbol 7, etc.
     private String descripcion;
-    private double valorPorHora;
+    private double valorReserva;     // Renombrado desde valorPorHora
+    private double valorFinalTurno;  // Valor final del turno
+    private String estado = "ACTIVA"; // Valores: ACTIVA, SUSPENDIDA
+    
+    private LocalDate suspendidaDesde; // NUEVO: Fecha desde la cual no se puede reservar
 }

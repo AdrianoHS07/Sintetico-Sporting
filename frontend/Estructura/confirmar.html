@@ -2,581 +2,126 @@
 <html lang="es">
 
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Confirmar Reserva</title>
-
-    <style>
-        *{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Poppins',sans-serif;
-}
-
-body{
-
-background:url("img/CANCHOTAAAAA.png");
-
-background-size:cover;
-
-background-position:center;
-
-background-repeat:no-repeat;
-
-min-height:100vh;
-
-}
-
-.overlay{
-
-width:100%;
-
-min-height:100vh;
-
-background:rgba(0,0,0,.65);
-
-display:flex;
-
-justify-content:center;
-
-align-items:center;
-
-}
-
-.contenedor{
-
-width:100%;
-
-max-width:600px;
-
-text-align:center;
-
-}
-
-.escudo{
-
-width:90px;
-
-margin:auto;
-
-display:block;
-
-margin-bottom:15px;
-
-}
-
-h1{
-
-color:white;
-
-font-size:42px;
-
-margin-bottom:8px;
-
-}
-
-.subtitulo{
-
-color:#ddd;
-
-margin-bottom:30px;
-
-}
-
-.panel{
-
-background:rgba(20,20,20,.82);
-
-padding:35px;
-
-border-radius:20px;
-
-box-shadow:0 10px 35px rgba(0,0,0,.45);
-
-}
-
-.panel h2{
-
-color:white;
-
-margin-bottom:25px;
-
-}
-
-.dato{
-
-background:rgba(255,255,255,.08);
-
-padding:15px;
-
-border-radius:12px;
-
-margin-bottom:18px;
-
-text-align:left;
-
-}
-
-.dato h3{
-
-color:#ffffff;
-
-margin-bottom:8px;
-
-}
-
-.dato p{
-
-color:#d8d8d8;
-
-}
-
-.botones{
-
-margin-top:30px;
-
-display:flex;
-
-justify-content:space-between;
-
-}
-
-button{
-
-padding:12px 22px;
-
-border:none;
-
-border-radius:10px;
-
-cursor:pointer;
-
-font-weight:bold;
-
-transition:.3s;
-
-}
-
-.confirmar{
-
-background:#c62828;
-
-color:white;
-
-}
-
-.confirmar:hover{
-
-background:#e53935;
-
-transform:scale(1.05);
-
-}
-
-.cancelar{
-
-background:#555;
-
-color:white;
-
-}
-
-.cancelar:hover{
-
-background:#777;
-
-}
-.precio{
-
-margin:25px 0;
-
-padding:20px;
-
-background:rgba(255,255,255,.08);
-
-border-radius:15px;
-
-}
-
-.precio h2{
-
-color:#00C851;
-
-font-size:42px;
-
-margin-bottom:5px;
-
-}
-
-.precio p{
-
-color:#d9d9d9;
-
-}
-
-.mercadopago{
-
-background:#009EE3;
-
-width:100%;
-
-padding:15px;
-
-font-size:18px;
-
-}
-
-.mercadopago:hover{
-
-background:#0084C2;
-
-}
-
-.cancelar{
-
-background:#555;
-
-width:100%;
-
-padding:15px;
-
-}
-.volver{
-
-position:fixed;
-
-top:25px;
-
-left:25px;
-
-width:50px;
-
-height:50px;
-
-background:rgba(20,20,20,.85);
-
-color:white;
-
-border-radius:50%;
-
-display:flex;
-
-justify-content:center;
-
-align-items:center;
-
-text-decoration:none;
-
-font-size:28px;
-
-font-weight:bold;
-
-transition:.3s;
-
-box-shadow:0 5px 15px rgba(0,0,0,.4);
-
-}
-
-.volver:hover{
-
-background:#c62828;
-
-transform:scale(1.1);
-
-}
-.transferencia{
-
-background:#00a651;
-
-width:100%;
-
-padding:15px;
-
-font-size:18px;
-
-color:white;
-
-margin-top:10px;
-
-}
-
-.transferencia:hover{
-
-background:#008c46;
-
-}
-
-.separador{
-
-margin:20px 0;
-
-color:white;
-
-font-weight:bold;
-
-}
-/* ---------------------- */
-/* MENÚ HAMBURGUESA */
-/* ---------------------- */
-
-#menu-toggle{
-
-display:none;
-
-}
-
-.hamburguesa{
-
-position:fixed;
-
-top:25px;
-
-left:25px;
-
-width:55px;
-
-height:55px;
-
-background:#c62828;
-
-color:white;
-
-font-size:30px;
-
-display:flex;
-
-justify-content:center;
-
-align-items:center;
-
-border-radius:12px;
-
-cursor:pointer;
-
-z-index:1001;
-
-transition:.3s;
-
-box-shadow:0 5px 20px rgba(0,0,0,.35);
-
-}
-
-.hamburguesa:hover{
-
-background:#e53935;
-
-transform:scale(1.08);
-
-}
-
-.menu-lateral{
-
-position:fixed;
-
-top:0;
-
-left:-300px;
-
-width:280px;
-
-height:100%;
-
-background:#171717;
-
-transition:.35s;
-
-padding-top:30px;
-
-box-shadow:10px 0 30px rgba(0,0,0,.45);
-
-z-index:1000;
-
-}
-
-#menu-toggle:checked ~ .menu-lateral{
-
-left:0;
-
-}
-
-.perfil{
-
-text-align:center;
-
-margin-bottom:40px;
-
-}
-
-.perfil img{
-
-width:90px;
-
-margin-bottom:10px;
-
-}
-
-.perfil h2{
-
-color:white;
-
-font-size:22px;
-
-}
-
-.menu-lateral a{
-
-display:block;
-
-padding:18px 30px;
-
-color:white;
-
-text-decoration:none;
-
-font-size:18px;
-
-transition:.3s;
-
-}
-
-.menu-lateral a:hover{
-
-background:#c62828;
-
-padding-left:40px;
-
-}
-
-    </style>
-
+    <link rel="stylesheet" href="../css/confirmar.css">
+    <title>Confirmar Reserva | Sintético Sporting</title>
 </head>
 
 <body>
-    <a href="javascript:history.back()" class="volver">
-    ←
-</a>
-<input type="checkbox" id="menu-toggle">
 
-<label for="menu-toggle" class="hamburguesa">
-☰
-</label>
+    <input type="checkbox" id="menu-toggle">
 
-<nav class="menu-lateral">
+    <label for="menu-toggle" class="hamburguesa">☰</label>
 
-<div class="perfil">
+    <nav class="menu-lateral">
+        <div class="perfil">
+            <img src="../img/Escudo_del_Club_Atlético_Sporting.png" alt="Escudo Sporting">
+            <h2>SINTÉTICO SPORTING</h2>
+            <p id="saludo-usuario" style="color: #fff; margin-top: 5px; font-size: 0.9em;"></p>
+        </div>
 
-<img src="img/Escudo_del_Club_Atlético_Sporting.png">
+        <a href="canchas.html">⚽ Reservar Cancha</a>
+        <a href="mis_reservas.html">📅 Mis Reservas</a>
+        <a href="mis_multas.html" style="color: #fbbf24;">⚠️ Mis Multas</a>
+        <a href="javascript:void(0)" id="btn-cerrar-sesion">🚪 Cerrar Sesión</a>
+    </nav>
 
-<h2>SINTÉTICO SPORTING</h2>
+    <div class="overlay">
 
-</div>
+        <main class="contenedor">
 
-<a href="index.html">🏠 Inicio</a>
+            <img
+                src="../img/Escudo_del_Club_Atlético_Sporting.png"
+                class="escudo"
+                alt="Club Atlético Sporting"
+            >
 
-<a href="canchas.html">⚽ Reservar Cancha</a>
+            <h1>SINTÉTICO SPORTING</h1>
 
-<a href="mis_reservas.html">📅 Mis Reservas</a>
+            <p class="subtitulo">CONFIRMÁ TU PARTIDO</p>
 
-<a href="#">👤 Mi Perfil</a>
+            <section class="panel">
 
-<a href="#">⚙ Configuración</a>
+                <div class="encabezado-panel">
+                    <span class="etiqueta">RESUMEN DE TU RESERVA</span>
+                    <h2 id="cancha-reserva">⚽ CANCHA</h2>
+                    <p class="descripcion">Revisá los datos antes de continuar</p>
+                </div>
 
-<a href="login.html">🚪 Cerrar Sesión</a>
+                <div class="dato">
+                    <h3>📅 FECHA DEL PARTIDO</h3>
+                    <p id="fecha-reserva">-</p>
+                </div>
 
-</nav>
+                <div class="dato">
+                    <h3>🕒 HORARIO RESERVADO</h3>
+                    <p id="horario-reserva">-</p>
+                </div>
 
-<div class="overlay">
+                <div class="dato">
+                    <h3>👥 MODALIDAD</h3>
+                    <p id="modalidad-reserva" style="color: #4ade80; font-weight: bold;">-</p>
+                </div>
 
-<div class="contenedor">
+                <div class="titulo-pago">
+                    <h3>ELEGÍ CÓMO PAGAR</h3>
+                    <p>Seleccioná tu método de pago preferido</p>
+                </div>
 
-<img src="img/Escudo_del_Club_Atlético_Sporting.png" class="escudo">
+                <div class="botones">
 
-<h1>SINTÉTICO SPORTING</h1>
+                    <button type="button" class="mercadopago">
+                        💳 MERCADO PAGO
+                    </button>
 
-<p class="subtitulo">
-Confirmar Reserva
-</p>
+                    <p class="separador">⚽</p>
 
-<div class="panel">
+                    <a href="transferencia.html">
+                        <button type="button" class="transferencia">
+                            🏦 TRANSFERENCIA BANCARIA
+                        </button>
+                    </a>
 
-<h2>⚽ CANCHA 1</h2>
+                    <a id="btn-volver-horarios" class="enlace-cancelar">
+                        <button type="button" class="cancelar">
+                            VOLVER A HORARIOS
+                        </button>
+                    </a>
 
-<div class="dato">
+                </div>
 
-<h3>📅 Fecha</h3>
+            </section>
 
-<p>21/07/2026</p>
+            <p class="pie-pagina">
+                CLUB ATLÉTICO SPORTING · RESERVAS ONLINE
+            </p>
 
-</div>
+        </main>
 
-<div class="dato">
+    </div>
 
-<h3>🕒 Horario</h3>
-
-<p>20:00 - 21:00</p>
-
-</div>
-
-<div class="dato">
-
-<h3>👥 Modalidad</h3>
-
-<p>8 jugadores</p>
-
-</div>
-
-<div class="botones">
-
-<a href="mercadopago.html">
-
-<button class="mercadopago">
-
-💳 PAGAR CON MERCADO PAGO
-
-</button>
-
-</a>
-
-<p class="separador">
-
-────────── O ──────────
-
-</p>
-
-<a href="transferencia.html">
-
-<button class="transferencia">
-
-🏦 PAGAR CON TRANSFERENCIA
-
-</button>
-
-</a>
-
-<br><br>
-
-<a href="javascript:history.back()">
-
-<button class="cancelar">
-
-CANCELAR
-
-</button>
-
-</a>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
+    <script src="../js/confirmar.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const usuarioGuardado = sessionStorage.getItem("usuario");
+            if (usuarioGuardado) {
+                try {
+                    const u = JSON.parse(usuarioGuardado);
+                    const saludo = document.getElementById("saludo-usuario");
+                    if (saludo) saludo.textContent = `Hola, ${u.nombre || u.email}`;
+                } catch(e) {}
+            }
+            const btnSalir = document.getElementById("btn-cerrar-sesion");
+            if (btnSalir) {
+                btnSalir.addEventListener("click", function() {
+                    sessionStorage.clear();
+                    localStorage.removeItem("usuario");
+                    window.location.href = "login.html";
+                });
+            }
+        });
+    </script>
 
 </body>
-
 </html>

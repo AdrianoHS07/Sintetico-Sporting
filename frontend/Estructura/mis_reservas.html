@@ -1,242 +1,79 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Mis Reservas</title>
-
-<style>
-    *{
-
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Poppins',sans-serif;
-
-}
-
-body{
-
-background:url("img/CANCHOTAAAAA.png");
-background-size:cover;
-background-position:center;
-
-}
-
-.overlay{
-
-width:100%;
-min-height:100vh;
-
-background:rgba(0,0,0,.65);
-
-display:flex;
-
-justify-content:center;
-
-align-items:center;
-
-padding:30px;
-
-}
-
-.contenedor{
-
-width:100%;
-max-width:700px;
-
-}
-
-.escudo{
-
-width:90px;
-
-display:block;
-
-margin:auto;
-
-margin-bottom:20px;
-
-}
-
-h1{
-
-color:white;
-
-text-align:center;
-
-margin-bottom:30px;
-
-}
-
-.panel{
-
-background:rgba(20,20,20,.82);
-
-padding:30px;
-
-border-radius:20px;
-
-}
-
-.reserva{
-
-background:rgba(255,255,255,.08);
-
-padding:20px;
-
-border-radius:15px;
-
-margin-bottom:20px;
-
-}
-
-.reserva h2{
-
-color:white;
-
-margin-bottom:10px;
-
-}
-
-.reserva p{
-
-color:#ddd;
-
-margin-bottom:6px;
-
-}
-
-.estado{
-
-color:#00d26a !important;
-
-font-weight:bold;
-
-}
-
-.pendiente{
-
-color:#ffd000 !important;
-
-font-weight:bold;
-
-}
-
-button{
-
-margin-top:15px;
-
-width:100%;
-
-padding:14px;
-
-background:#c62828;
-
-color:white;
-
-border:none;
-
-border-radius:10px;
-
-cursor:pointer;
-
-font-weight:bold;
-
-}
-
-button:hover{
-
-background:#e53935;
-
-}
-
-.volver{
-
-position:fixed;
-
-top:20px;
-
-left:20px;
-
-width:50px;
-
-height:50px;
-
-border-radius:50%;
-
-background:#202020;
-
-color:white;
-
-display:flex;
-
-justify-content:center;
-
-align-items:center;
-
-text-decoration:none;
-
-font-size:30px;
-
-}
-
-</style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Reservas | Sintético Sporting</title>
+    <link rel="stylesheet" href="../css/mis_reservas.css">
+    <script src="../js/mis_reservas.js" defer></script>
 </head>
 
 <body>
 
-<a href="javascript:history.back()" class="volver">←</a>
+    <a href="canchas.html" class="volver">← Volver a Canchas</a>
 
-<div class="overlay">
+    <div class="overlay">
+        <main class="contenedor">
 
-<div class="contenedor">
+            <img
+                src="../img/Escudo_del_Club_Atlético_Sporting.png"
+                class="escudo"
+                alt="Escudo del Club Atlético Sporting"
+            >
 
-<img src="img/Escudo_del_Club_Atlético_Sporting.png" class="escudo">
+            <h1>Mis Reservas</h1>
 
-<h1>Mis Reservas</h1>
+            <p class="subtitulo">
+                Consultá tus partidos y el estado de tus pagos.
+            </p>
 
-<div class="panel">
+            <div class="filtros">
+                <button type="button" class="filtro activo" data-filtro="TODAS">
+                    Todas
+                </button>
 
-<div class="reserva">
+                <button type="button" class="filtro" data-filtro="PENDIENTES">
+                    Pendientes
+                </button>
 
-<h2>⚽ Cancha 1</h2>
+                <button type="button" class="filtro" data-filtro="CONFIRMADAS">
+                    Confirmadas
+                </button>
 
-<p>📅 21/07/2026</p>
+                <button type="button" class="filtro" data-filtro="CANCELADAS">
+                    Canceladas
+                </button>
+            </div>
 
-<p>🕒 20:00 - 21:00</p>
+            <section class="panel">
 
-<p class="estado">🟢 Confirmada</p>
+                <div class="encabezado-panel">
+                    <h2>📅 Tus partidos</h2>
+                    <span id="cantidad-reservas">0 reservas</span>
+                </div>
 
-<button>VER DETALLE</button>
+                <div id="lista-reservas"></div>
 
-</div>
+                <div id="sin-reservas" class="sin-reservas" hidden>
+                    <div class="icono-vacio">⚽</div>
+                    <h3>No hay reservas para mostrar</h3>
+                    <p>
+                        Cuando realices una reserva, podrás consultar
+                        su estado desde esta pantalla.
+                    </p>
+                    <a href="canchas.html" class="btn-reservar">
+                        RESERVAR CANCHA
+                    </a>
+                </div>
 
-<div class="reserva">
+            </section>
 
-<h2>⚽ Cancha 2</h2>
+            <p class="pie-pagina">
+                CLUB ATLÉTICO SPORTING · RESERVAS ONLINE
+            </p>
 
-<p>📅 25/07/2026</p>
-
-<p>🕒 21:00 - 22:00</p>
-
-<p class="pendiente">🟡 Pendiente de Pago</p>
-
-<button>PAGAR</button>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
+        </main>
+    </div>
 
 </body>
-
 </html>

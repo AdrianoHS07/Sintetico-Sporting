@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Administración | Sintético Sporting</title>
+
+    <link rel="stylesheet" href="../css/admin.css">
+    <script src="../js/admin.js" defer></script>
+</head>
+
+<body>
+
+    <aside class="menu-admin">
+        <h2>⚽ SPORTING ADMIN</h2>
+
+        <nav>
+            <button type="button" id="btn-nueva-cancha" class="btn-agregar-cancha">
+                ➕ Agregar cancha
+            </button>
+            <button type="button" id="btn-modificar-cancha" class="btn-modificar-cancha">
+                ⚙️ Modificar cancha
+            </button>
+            <button type="button" id="btn-gestionar-multas" class="btn-principal" style="background: #b45309; width: 100%; border: none; padding: 12px; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; margin-top: 10px;">
+                ⚠️ Gestionar Multas
+            </button>
+            <a href="login.html" style="display: block; text-align: center; text-decoration: none; background: #1e1e26; color: #fff; padding: 12px; border-radius: 8px; border: 1px solid #444; margin-top: 20px; font-size: 14px; transition: background 0.2s;">Volver al login</a>
+        </nav>
+    </aside>
+
+    <main class="contenido-admin">
+
+        <header id="inicio" class="encabezado-principal">
+            <div>
+                <h1>Panel de administración</h1>
+                <p>Gestión de reservas y pagos</p>
+            </div>
+        </header>
+
+        <section class="estadisticas">
+
+            <div class="tarjeta">
+                <h3>Reservas totales</h3>
+                <p id="total-reservas">0</p>
+            </div>
+
+            <div class="tarjeta">
+                <h3>Pagos pendientes</h3>
+                <p id="pagos-pendientes">0</p>
+            </div>
+
+            <div class="tarjeta">
+                <h3>Reservas confirmadas</h3>
+                <p id="reservas-confirmadas">0</p>
+            </div>
+
+        </section>
+
+        <section id="reservas" class="seccion-reservas">
+
+            <div class="encabezado-reservas">
+                <h2>Reservas de canchas</h2>
+
+                <button type="button" id="btn-nueva-reserva">
+                    + Nueva reserva
+                </button>
+            </div>
+
+            <div class="herramientas">
+
+                <input
+                    type="search"
+                    id="buscar-reserva"
+                    placeholder="Buscar por nombre y apellido..."
+                    aria-label="Buscar reservas"
+                >
+
+                <select id="filtro-estado" aria-label="Filtrar reservas">
+                    <option value="Todas">Todas las reservas</option>
+                    <option value="Pendiente">Pendientes</option>
+                    <option value="Confirmado">Confirmadas</option>
+                    <option value="Cancelado">Canceladas</option>
+                </select>
+
+            </div>
+
+            <div class="tabla-contenedor">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nombre y apellido</th>
+                            <th>Cancha</th>
+                            <th>Fecha</th>
+                            <th>Horario</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="tabla-reservas"></tbody>
+                </table>
+            </div>
+
+            <p id="sin-resultados" class="sin-resultados" hidden>
+                No se encontraron reservas.
+            </p>
+
+        </section>
+
+    </main>
+
+    <!-- VENTANA NUEVA RESERVA -->
+    <div class="modal" id="modal-reserva" aria-hidden="true">
+        <div class="modal-contenido" role="dialog" aria-modal="true" aria-labelledby="titulo-modal">
+            <div class="modal-encabezado">
+                <h2 id="titulo-modal">Nueva reserva</h2>
+                <button type="button" id="cerrar-modal" aria-label="Cerrar ventana">✕</button>
+            </div>
+
+            <form id="form-nueva-reserva" class="form-modal">
+                <div class="campo-grupo">
+                    <label for="dni-cliente">DNI del cliente</label>
+                    <input type="text" id="dni-cliente" placeholder="Ej: 35123456" maxlength="20" required>
+                </div>
+
+                <div class="campo-grupo">
+                    <label for="nombre-cliente">Nombre y apellido</label>
+                    <input type="text" id="nombre-cliente" placeholder="Ej: Juan Pérez" maxlength="100" required>
+                </div>
+
+                <div class="campo-grupo">
+                    <label for="cancha-reserva">Cancha</label>
+                    <select id="cancha-reserva" required>
+                        <option value="" disabled selected>Seleccionar cancha</option>
+                    </select>
+                </div>
+
+                <div class="campo-grupo">
+                    <label for="fecha-reserva-admin">Fecha</label>
+                    <input type="date" id="fecha-reserva-admin" required>
+                </div>
+
+                <div class="campo-grupo">
+                    <label for="horario-reserva">Horario</label>
+                    <select id="horario-reserva" required>
+                        <option value="" disabled selected>Seleccioná una fecha y cancha primero</option>
+                    </select>
+                </div>
+
+                <div class="campo-grupo">
+                    <label for="estado-reserva">Estado del pago</label>
+                    <select id="estado-reserva" required>
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="Confirmado">Confirmado</option>
+                    </select>
+                </div>
+
+                <p id="error-formulario" class="error-formulario" role="alert" hidden></p>
+
+                <button type="submit" class="btn-guardar">Guardar reserva</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- VENTANA NUEVA CANCHA -->
+    <div class="modal" id="modal-cancha" aria-hidden="true">
+        <div class="modal-contenido" role="dialog" aria-modal="true" aria-labelledby="titulo-modal-cancha">
+            <div class="modal-encabezado">
+                <h2 id="titulo-modal-cancha">Agregar nueva cancha</h2>
+                <button type="button" id="cerrar-modal-cancha" aria-label="Cerrar ventana">✕</button>
+            </div>
+
+            <form id="form-nueva-cancha" class="form-modal">
+                <div class="campo-grupo">
+                    <label for="numero-cancha">Número de cancha</label>
+                    <input type="number" id="numero-cancha" readonly style="background-color: #2a2a36; cursor: not-allowed;" required>
+                </div>
+
+                <div class="campo-grupo">
+                    <label for="modalidad-cancha">Modalidad</label>
+                    <select id="modalidad-cancha" required>
+                        <option value="" disabled selected>Seleccionar modalidad</option>
+                        <option value="Fútbol 5">Fútbol 5 (5 vs 5)</option>
+                        <option value="Fútbol 7">Fútbol 7 (7 vs 7)</option>
+                        <option value="Fútbol 8">Fútbol 8 (8 vs 8)</option>
+                        <option value="Fútbol 11">Fútbol 11 (11 vs 11)</option>
+                    </select>
+                </div>
+
+                <div class="campo-grupo">
+                    <label for="descripcion-cancha">Descripción</label>
+                    <input type="text" id="descripcion-cancha" placeholder="Ej: Césped sintético techado" maxlength="100" required>
+                </div>
+
+                <div class="campo-grupo">
+                    <label for="valor-cancha">Valor de reserva ($)</label>
+                    <input type="text" id="valor-cancha" placeholder="Ej: 5000" step="100" min="0" required>
+                </div>
+
+                <div class="campo-grupo">
+                    <label for="valor-final-cancha">Valor final del turno ($)</label>
+                    <input type="text" id="valor-final-cancha" placeholder="Ej: 20000" step="100" min="0" required>
+                </div>
+
+                <p id="error-formulario-cancha" class="error-formulario" role="alert" hidden></p>
+
+                <button type="submit" class="btn-guardar">Guardar cancha</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- VENTANA MODIFICAR / ADMINISTRAR CANCHAS -->
+    <div class="modal" id="modal-gestionar-canchas" aria-hidden="true">
+        <div class="modal-contenido" role="dialog" aria-modal="true" aria-labelledby="titulo-modal-ges">
+            <div class="modal-encabezado">
+                <h2 id="titulo-modal-ges">Gestión de canchas</h2>
+                <button type="button" id="cerrar-modal-ges" aria-label="Cerrar ventana">✕</button>
+            </div>
+            <div id="lista-canchas-container" style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;">
+                <!-- Se cargan dinámicamente -->
+            </div>
+        </div>
+    </div>
+
+    <!-- VENTANA GESTIONAR MULTAS -->
+    <div class="modal" id="modal-gestionar-multas" aria-hidden="true">
+        <div class="modal-contenido" role="dialog" aria-modal="true" aria-labelledby="titulo-modal-multas" style="max-width: 700px;">
+            <div class="modal-encabezado">
+                <h2 id="titulo-modal-multas">Gestión de Multas y Sanciones</h2>
+                <button type="button" id="cerrar-modal-multas" aria-label="Cerrar ventana">✕</button>
+            </div>
+            <p class="subtitulo" style="margin-top: 5px;">Listado de usuarios con penalizaciones o suspensiones activas.</p>
+            <div id="lista-multados-container" style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px; max-height: 400px; overflow-y: auto;">
+                <!-- Se cargan dinámicamente -->
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

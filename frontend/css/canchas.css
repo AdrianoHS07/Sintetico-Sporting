@@ -1,0 +1,197 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-image: url("../img/CANCHOTAAAAA.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    min-height: 100vh;
+}
+
+/* CONTENIDO PRINCIPAL */
+
+.contenedor {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.escudo {
+    width: 80px;
+    margin-bottom: 10px;
+}
+
+h1 {
+    color: white;
+    margin-bottom: 10px;
+}
+
+.subtitulo {
+    color: white;
+    margin-bottom: 40px;
+}
+
+/* GRILLA Y TARJETAS DE CANCHAS */
+
+.grilla-canchas {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.cancha {
+    background: rgba(0, 0, 0, 0.80);
+    color: white;
+    border: 2px solid #c62828;
+    width: 100%;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s ease;
+}
+
+.cancha:hover {
+    transform: translateY(-3px);
+}
+
+.cancha h2 {
+    color: white;
+    margin-bottom: 10px;
+}
+
+.cancha p {
+    margin-bottom: 8px;
+    color: #dddddd;
+}
+
+/* BOTONES */
+
+button, .btn-reservar-cancha {
+    display: inline-block;
+    background: #c62828;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    text-decoration: none;
+    transition: 0.3s;
+    margin-top: 10px;
+}
+
+button:hover, .btn-reservar-cancha:hover {
+    background: #e53935;
+    transform: scale(1.05);
+}
+
+/* MENÚ HAMBURGUESA */
+
+#menu-toggle {
+    display: none;
+}
+
+.hamburguesa {
+    position: fixed;
+    top: 25px;
+    left: 25px;
+    width: 55px;
+    height: 55px;
+    background: #c62828;
+    color: white;
+    font-size: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 12px;
+    cursor: pointer;
+    z-index: 1001;
+    transition: 0.3s;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.35);
+}
+
+.hamburguesa:hover {
+    background: #e53935;
+    transform: scale(1.08);
+}
+
+/* MENÚ LATERAL */
+
+.menu-lateral {
+    position: fixed;
+    top: 0;
+    left: -300px;
+    width: 280px;
+    height: 100%;
+    background: #171717;
+    transition: 0.35s;
+    padding-top: 30px;
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.45);
+    z-index: 1000;
+}
+
+#menu-toggle:checked ~ .menu-lateral {
+    left: 0;
+}
+
+/* PERFIL */
+
+.perfil {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.perfil img {
+    width: 90px;
+    margin-bottom: 10px;
+}
+
+.perfil h2 {
+    color: white;
+    font-size: 22px;
+}
+
+/* ENLACES DEL MENÚ */
+
+.menu-lateral a {
+    display: block;
+    padding: 18px 30px;
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    transition: 0.3s;
+}
+
+.menu-lateral a:hover,
+.menu-lateral a.activo {
+    background: #c62828;
+    padding-left: 40px;
+}
+
+/* ADAPTACIÓN A CELULARES */
+
+@media (max-width: 600px) {
+    .contenedor {
+        padding: 95px 15px 30px;
+    }
+
+    .hamburguesa {
+        top: 15px;
+        left: 15px;
+        width: 50px;
+        height: 50px;
+    }
+
+    .cancha {
+        width: 100%;
+    }
+}
