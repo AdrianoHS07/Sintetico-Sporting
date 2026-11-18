@@ -32,7 +32,6 @@ document.addEventListener("DOMContentLoaded", async function () {
             menu.classList.toggle("abierto");
         });
 
-        // Cerrar menú al hacer clic fuera de él
         document.addEventListener("click", function (evento) {
             if (menu.classList.contains("abierto")) {
                 const dentroDelMenu = menu.contains(evento.target);
@@ -45,7 +44,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         });
     }
 
-    // Marcar enlace activo en el menú lateral
     const paginaActual = window.location.pathname.split("/").pop();
     document.querySelectorAll(".menu-lateral a").forEach(function (link) {
         if (link.getAttribute("href") === paginaActual) {
@@ -66,7 +64,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
                 if (tituloCancha) tituloCancha.textContent = nombreCanchaStr;
                 
-                // Mostrar la modalidad arriba de la descripción
                 if (descripcionCancha) {
                     descripcionCancha.innerHTML = `<strong style="color: #4ade80; display: block; margin-bottom: 4px;">${modalidadCanchaStr}</strong>${datosCancha.descripcion || "Seleccioná la fecha y el horario para tu partido"}`;
                 }
@@ -124,15 +121,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         try {
             const respuesta = await fetch(`http://localhost:8080/reservas/ocupadas?idCancha=${idCancha}&fecha=${fecha}`);
-            let horasOcupadas = [];
+            let mapaReservasOcupadas = {}; // Guardará hora -> estado de la reserva
 
             if (respuesta.ok) {
                 const reservasOcupadas = await respuesta.json();
-                horasOcupadas = reservasOcupadas.map(r => {
-                    if (typeof r.hora === 'string') {
-                        return r.hora.substring(0, 5);
+                reservasOcupadas.forEach(r => {
+                    if (r.hora) {
+                        const horaCorta = typeof r.hora === 'string' ? r.hora.substring(0, 5) : r.hora;
+                        mapaReservasOcupadas[horaCorta] = r.estado; // Ej: "CONFIRMADO" o "PENDIENTE_PAGO"
                     }
-                    return r.hora;
                 });
             }
 
@@ -145,7 +142,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                     const rangoTexto = `${horaStr} - ${horaFinStr}`;
 
                     const yaPaso = esHorarioPasado(fecha, horaStr);
-                    const estaOcupado = horasOcupadas.includes(horaStr);
+                    const estadoReserva = mapaReservasOcupadas[horaStr]; // undefined si está libre
 
                     const divHorario = document.createElement("div");
                     divHorario.className = "horario";
@@ -155,12 +152,21 @@ document.addEventListener("DOMContentLoaded", async function () {
                     let botonDeshabilitado = false;
                     let botonTexto = "RESERVAR";
 
+                    if (yaPassAsync = yaPaso) { // simplificado
+                        // se mantiene abajo
+                    }
+
                     if (yaPaso) {
                         estadoClase = "ocupado";
                         estadoTexto = "⌛ Expirado";
                         botonDeshabilitado = true;
                         botonTexto = "EXPIRADO";
-                    } else if (estaOcupado) {
+                    } else if (estadoReserva === "PENDIENTE_PAGO") {
+                        estadoClase = "pendiente"; // podés darle un estilo amarillo/naranja en tu CSS
+                        estadoTexto = "⏳ Pendiente de pago";
+                        botonDeshabilitado = true;
+                        botonTexto = "PENDIENTE";
+                    } else if (estadoReserva) { // CONFIRMADO / RESERVADO u otro
                         estadoClase = "ocupado";
                         estadoTexto = "🔴 Reservado";
                         botonDeshabilitado = true;

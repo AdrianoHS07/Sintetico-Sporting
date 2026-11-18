@@ -1,7 +1,11 @@
 package com.sinteticosporting.backend.service;
 
+import com.sinteticosporting.backend.entity.Cancha;
+import com.sinteticosporting.backend.entity.Multa;
 import com.sinteticosporting.backend.entity.Reserva;
 import com.sinteticosporting.backend.entity.Usuario;
+import com.sinteticosporting.backend.repository.CanchaRepository;
+import com.sinteticosporting.backend.repository.MultaRepository;
 import com.sinteticosporting.backend.repository.ReservaRepository;
 import com.sinteticosporting.backend.repository.UsuarioRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,21 +25,61 @@ public class ReservaService {
 
     private final ReservaRepository reservaRepository;
     private final UsuarioRepository usuarioRepository;
-    private final EmailService emailService; // <--- Servicio de correo integrado
+    private final MultaRepository multaRepository;
+    private final CanchaRepository canchaRepository;
+    private final EmailService emailService;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public ReservaService(ReservaRepository reservaRepository, UsuarioRepository usuarioRepository, EmailService emailService) {
+    public ReservaService(ReservaRepository reservaRepository, 
+                          UsuarioRepository usuarioRepository, 
+                          MultaRepository multaRepository,
+                          CanchaRepository canchaRepository,
+                          EmailService emailService) {
         this.reservaRepository = reservaRepository;
         this.usuarioRepository = usuarioRepository;
+        this.multaRepository = multaRepository;
+        this.canchaRepository = canchaRepository;
         this.emailService = emailService;
     }
 
     private final List<String> ESTADOS_OCUPADOS = List.of("CONFIRMADO", "RESERVADO", "PENDIENTE_PAGO");
 
-    // 1. Crear reserva (Valida fechas pasadas, si está suspendido y gestiona el usuario)
+    // Método auxiliar seguro para obtener el número de la cancha usando el atributo real 'numero'
+    private String obtenerNombreCanchaSeguro(Cancha cancha) {
+        if (cancha == null) {
+            return "Cancha";
+        }
+        return "Cancha " + cancha.getNumero();
+    }
+
+    // Método auxiliar seguro para obtener el email o identificación del usuario
+    private String obtenerNombreUsuarioSeguro(Usuario usuario) {
+        if (usuario == null) {
+            return "Cliente";
+        }
+        if (usuario.getEmail() != null && !usuario.getEmail().isEmpty()) {
+            return usuario.getEmail();
+        }
+        return "Cliente";
+    }
+
     public Reserva crearReserva(Reserva reserva) {
-        
-        // VALIDACIÓN DE SUSPENSIÓN POR MULTAS
+        if (reserva.getFechaCreacion() == null) {
+            reserva.setFechaCreacion(LocalDateTime.now());
+        }
+
+        limpiarReservasExpiradas();
+
+        if (reserva.getCancha() != null) {
+            Cancha canchaDB = canchaRepository.findById(reserva.getCancha().getIdCancha()).orElse(null);
+            if (canchaDB != null && "SUSPENDIDA".equalsIgnoreCase(canchaDB.getEstado())) {
+                LocalDate fechaSuspension = canchaDB.getSuspendidaDesde();
+                if (fechaSuspension != null && !reserva.getFecha().isBefore(fechaSuspension)) {
+                    throw new RuntimeException("Lo sentimos, esta cancha se encuentra suspendida / en mantenimiento a partir del " + fechaSuspension + ".");
+                }
+            }
+        }
+
         if (reserva.getUsuario() != null && reserva.getUsuario().getIdUsuario() > 0) {
             Usuario usuarioDB = usuarioRepository.findById(reserva.getUsuario().getIdUsuario()).orElse(null);
             if (usuarioDB != null && usuarioDB.getSuspendidoHasta() != null) {
@@ -46,7 +90,6 @@ public class ReservaService {
             }
         }
 
-        // VALIDACIÓN DE SEGURIDAD: EVITAR RESERVAS EN EL PASADO
         LocalDate hoy = LocalDate.now();
         LocalTime ahora = LocalTime.now();
 
@@ -76,14 +119,16 @@ public class ReservaService {
             reserva.setEstado("PENDIENTE_PAGO");
         }
 
-        // DETECTAR SI ES UNA RESERVA PRESENCIAL DESDE EL ADMIN O WEB
         boolean esMostrador = false;
         String dniCliente = null;
         String nombreRealCliente = null;
 
         if (reserva.getUsuario() != null) {
             dniCliente = reserva.getUsuario().getDni();
-            nombreRealCliente = reserva.getUsuario().getNombre();
+            try {
+                nombreRealCliente = reserva.getUsuario().getNombre();
+            } catch (Exception ignored) {}
+            
             Long idU = reserva.getUsuario().getIdUsuario();
             if (idU == null || idU == 0L || idU == 99L) {
                 esMostrador = true;
@@ -104,13 +149,17 @@ public class ReservaService {
             Usuario usuarioExistente = usuarioRepository.findByDni(dniFinal).orElse(null);
 
             if (usuarioExistente != null) {
-                usuarioExistente.setNombre(nombreFinal);
+                try {
+                    usuarioExistente.setNombre(nombreFinal);
+                } catch (Exception ignored) {}
                 usuarioRepository.save(usuarioExistente);
                 reserva.setUsuario(usuarioExistente);
             } else {
                 Usuario nuevoPresencial = new Usuario();
                 nuevoPresencial.setDni(dniFinal);
-                nuevoPresencial.setNombre(nombreFinal);
+                try {
+                    nuevoPresencial.setNombre(nombreFinal);
+                } catch (Exception ignored) {}
                 nuevoPresencial.setEmail("dni_" + dniFinal + "@sinteticosporting.local");
                 nuevoPresencial.setContraseña(passwordEncoder.encode("temporal123"));
                 nuevoPresencial.setRol("USUARIO");
@@ -121,10 +170,34 @@ public class ReservaService {
             }
         }
 
-        return reservaRepository.save(reserva);
+        if (reserva.getFechaCreacion() == null) {
+            reserva.setFechaCreacion(LocalDateTime.now());
+        }
+
+        Reserva reservaGuardada = reservaRepository.save(reserva);
+
+        if ("CONFIRMADO".equalsIgnoreCase(reservaGuardada.getEstado())) {
+            if (reservaGuardada.getUsuario() != null && reservaGuardada.getUsuario().getEmail() != null && 
+                !reservaGuardada.getUsuario().getEmail().contains("@sinteticosporting.local")) {
+                try {
+                    String nombreCancha = obtenerNombreCanchaSeguro(reservaGuardada.getCancha());
+                    String nombreUsuario = obtenerNombreUsuarioSeguro(reservaGuardada.getUsuario());
+                    emailService.enviarCorreoConfirmacion(
+                        reservaGuardada.getUsuario().getEmail(),
+                        nombreUsuario,
+                        nombreCancha,
+                        reservaGuardada.getFecha().toString(),
+                        reservaGuardada.getHora().toString()
+                    );
+                } catch (Exception e) {
+                    System.err.println("Error al enviar correo de confirmación online: " + e.getMessage());
+                }
+            }
+        }
+
+        return reservaGuardada;
     }
 
-    // 2. Confirmar pago desde Admin y disparar el correo electrónico automáticamente
     @Transactional
     public void confirmarReserva(Long idReserva) {
         Reserva reserva = reservaRepository.findById(idReserva).orElse(null);
@@ -132,31 +205,52 @@ public class ReservaService {
             reserva.setEstado("CONFIRMADO");
             reservaRepository.save(reserva);
 
-            // Disparar correo si el usuario tiene email registrado
-            if (reserva.getUsuario() != null && reserva.getUsuario().getEmail() != null) {
+            if (reserva.getUsuario() != null && reserva.getUsuario().getEmail() != null && 
+                !reserva.getUsuario().getEmail().contains("@sinteticosporting.local")) {
                 try {
+                    String nombreCancha = obtenerNombreCanchaSeguro(reserva.getCancha());
+                    String nombreUsuario = obtenerNombreUsuarioSeguro(reserva.getUsuario());
                     emailService.enviarCorreoConfirmacion(
                         reserva.getUsuario().getEmail(), 
-                        reserva.getUsuario().getNombre()
+                        nombreUsuario,
+                        nombreCancha,
+                        reserva.getFecha().toString(),
+                        reserva.getHora().toString()
                     );
                 } catch (Exception e) {
-                    System.err.println("No se pudo enviar el correo de confirmación: " + e.getMessage());
+                    System.err.println("No se pudo enviar el correo de confirmación manual: " + e.getMessage());
                 }
             }
         }
     }
 
-    // 3. Cancelar reserva desde Admin (Sin penalización al usuario)
     @Transactional
     public void cancelarReserva(Long idReserva) {
         Reserva reserva = reservaRepository.findById(idReserva).orElse(null);
-        if (reserva != null) {
+        if (reserva != null && !"CANCELADA".equals(reserva.getEstado())) {
             reserva.setEstado("CANCELADA");
             reservaRepository.save(reserva);
+
+            if (reserva.getUsuario() != null && reserva.getUsuario().getEmail() != null && 
+                !reserva.getUsuario().getEmail().contains("@sinteticosporting.local")) {
+                try {
+                    String nombreCancha = obtenerNombreCanchaSeguro(reserva.getCancha());
+                    String nombreUsuario = obtenerNombreUsuarioSeguro(reserva.getUsuario());
+                    emailService.enviarCorreoCancelacionSinMulta(
+                        reserva.getUsuario().getEmail(),
+                        nombreUsuario,
+                        nombreCancha,
+                        reserva.getFecha().toString(),
+                        reserva.getHora().toString(),
+                        "por el administrador"
+                    );
+                } catch (Exception e) {
+                    System.err.println("Error al enviar correo de cancelación sin multa (admin): " + e.getMessage());
+                }
+            }
         }
     }
 
-    // 3.1. Cancelar reserva desde el Usuario con regla de anticipación y multas
     @Transactional
     public void cancelarReservaPorUsuario(Long idReserva, Long idUsuarioFirma) {
         Reserva reserva = reservaRepository.findById(idReserva)
@@ -177,41 +271,181 @@ public class ReservaService {
         reserva.setEstado("CANCELADA");
         reservaRepository.save(reserva);
 
+        String nombreCancha = obtenerNombreCanchaSeguro(reserva.getCancha());
+        String nombreUsuario = obtenerNombreUsuarioSeguro(reserva.getUsuario());
+
         if (horasRestantes < 4) {
             Usuario usuario = reserva.getUsuario();
             usuario.setMultasAcumuladas(usuario.getMultasAcumuladas() + 1);
+
+            Multa multa = new Multa();
+            multa.setUsuario(usuario);
+            multa.setFechaMulta(LocalDateTime.now());
+            String motivo = "Cancelación fuera de término por el usuario";
+            multa.setMotivo(motivo);
+            multaRepository.save(multa);
 
             if (usuario.getMultasAcumuladas() >= 3) {
                 usuario.setSuspendidoHasta(ahora.plusDays(15));
                 usuario.setMultasAcumuladas(0);
             }
             usuarioRepository.save(usuario);
+
+            if (usuario.getEmail() != null && !usuario.getEmail().contains("@sinteticosporting.local")) {
+                try {
+                    emailService.enviarCorreoMulta(usuario.getEmail(), nombreUsuario, motivo, usuario.getMultasAcumuladas());
+                } catch (Exception e) {
+                    System.err.println("Error al enviar correo de multa: " + e.getMessage());
+                }
+            }
+        } else {
+            if (reserva.getUsuario().getEmail() != null && !reserva.getUsuario().getEmail().contains("@sinteticosporting.local")) {
+                try {
+                    emailService.enviarCorreoCancelacionSinMulta(
+                        reserva.getUsuario().getEmail(),
+                        nombreUsuario,
+                        nombreCancha,
+                        reserva.getFecha().toString(),
+                        reserva.getHora().toString(),
+                        "por vos"
+                    );
+                } catch (Exception e) {
+                    System.err.println("Error al enviar correo de cancelación a tiempo: " + e.getMessage());
+                }
+            }
         }
     }
 
-    // 4. Obtener turnos ocupados
+    @Transactional
+    public void cancelarReservaConMulta(Long idReserva, Long idUsuario) {
+        Reserva reserva = reservaRepository.findById(idReserva)
+                .orElseThrow(() -> new RuntimeException("Reserva no encontrada"));
+        reserva.setEstado("CANCELADA");
+        reservaRepository.save(reserva);
+
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        usuario.setMultasAcumuladas(usuario.getMultasAcumuladas() + 1);
+
+        Multa multa = new Multa();
+        multa.setUsuario(usuario);
+        multa.setFechaMulta(LocalDateTime.now());
+        String motivo = "Cancelación fuera de término por administrador";
+        multa.setMotivo(motivo);
+        multaRepository.save(multa);
+
+        if (usuario.getMultasAcumuladas() >= 3) {
+            usuario.setSuspendidoHasta(LocalDateTime.now().plusDays(15));
+            usuario.setMultasAcumuladas(0);
+        }
+
+        usuarioRepository.save(usuario);
+
+        if (usuario.getEmail() != null && !usuario.getEmail().contains("@sinteticosporting.local")) {
+            try {
+                String nombreUsuario = obtenerNombreUsuarioSeguro(usuario);
+                emailService.enviarCorreoMulta(usuario.getEmail(), nombreUsuario, motivo, usuario.getMultasAcumuladas());
+            } catch (Exception e) {
+                System.err.println("Error al enviar correo de multa: " + e.getMessage());
+            }
+        }
+    }
+
+    @Transactional
+    public void registrarAusencia(Long idReserva, Long idUsuario) {
+        Reserva reserva = reservaRepository.findById(idReserva)
+                .orElseThrow(() -> new RuntimeException("Reserva no encontrada"));
+        reserva.setEstado("CANCELADA");
+        reservaRepository.save(reserva);
+
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        usuario.setMultasAcumuladas(usuario.getMultasAcumuladas() + 1);
+
+        Multa multa = new Multa();
+        multa.setUsuario(usuario);
+        multa.setFechaMulta(LocalDateTime.now());
+        String motivo = "Inasistencia / Falta al turno registrada por administrador";
+        multa.setMotivo(motivo);
+        multaRepository.save(multa);
+
+        if (usuario.getMultasAcumuladas() >= 3) {
+            usuario.setSuspendidoHasta(LocalDateTime.now().plusDays(15));
+            usuario.setMultasAcumuladas(0);
+        }
+
+        usuarioRepository.save(usuario);
+
+        if (usuario.getEmail() != null && !usuario.getEmail().contains("@sinteticosporting.local")) {
+            try {
+                String nombreUsuario = obtenerNombreUsuarioSeguro(usuario);
+                emailService.enviarCorreoMulta(usuario.getEmail(), nombreUsuario, motivo, usuario.getMultasAcumuladas());
+            } catch (Exception e) {
+                System.err.println("Error al enviar correo de multa: " + e.getMessage());
+            }
+        }
+    }
+
+    @Transactional
+    public void limpiarReservasExpiradas() {
+        LocalDateTime limiteTiempo = LocalDateTime.now().minusMinutes(15);
+        List<Reserva> pendientes = reservaRepository.findByEstado("PENDIENTE_PAGO");
+
+        for (Reserva r : pendientes) {
+            LocalDateTime creacion = r.getFechaCreacion() != null ? r.getFechaCreacion() : LocalDateTime.now();
+            if (creacion.isBefore(limiteTiempo)) {
+                r.setEstado("CANCELADA");
+                reservaRepository.save(r);
+
+                if (r.getUsuario() != null && r.getUsuario().getEmail() != null && !r.getUsuario().getEmail().contains("@sinteticosporting.local")) {
+                    try {
+                        String emailUsuario = r.getUsuario().getEmail();
+                        String nombreUsuario = obtenerNombreUsuarioSeguro(r.getUsuario());
+                        String nombreCancha = obtenerNombreCanchaSeguro(r.getCancha());
+
+                        String fechaStr = r.getFecha() != null ? r.getFecha().toString() : "";
+                        String horaStr = r.getHora() != null ? r.getHora().toString() : "";
+
+                        emailService.enviarCorreoReservaExpirada(
+                            emailUsuario,
+                            nombreUsuario,
+                            nombreCancha,
+                            fechaStr,
+                            horaStr
+                        );
+                    } catch (Exception e) {
+                        System.err.println("No se pudo enviar el correo de reserva expirada: " + e.getMessage());
+                    }
+                }
+            }
+        }
+    }
+
     public List<Reserva> obtenerReservasOcupadas(long idCancha, LocalDate fecha) {
+        limpiarReservasExpiradas();
         return reservaRepository.findByCanchaIdCanchaAndFechaAndEstadoIn(
                 idCancha, fecha, ESTADOS_OCUPADOS
         );
     }
 
-    // 5. Obtener reservas vigentes de un usuario
     public List<Reserva> obtenerReservasPorUsuario(long idUsuario) {
+        limpiarReservasExpiradas();
         LocalDate hoy = LocalDate.now();
         LocalTime ahora = LocalTime.now();
         return reservaRepository.findReservasVigentesPorUsuario(idUsuario, hoy, ahora);
     }
 
-    // 6. Obtener todas las reservas vigentes generales
     public List<Reserva> obtenerTodas() {
+        limpiarReservasExpiradas();
         LocalDate hoy = LocalDate.now();
         LocalTime ahora = LocalTime.now();
         return reservaRepository.findReservasVigentes(hoy, ahora);
     }
 
-    // 7. Obtener estadísticas de reservas vigentes
     public Map<String, Long> obtenerEstadisticas() {
+        limpiarReservasExpiradas();
         LocalDate hoy = LocalDate.now();
         LocalTime ahora = LocalTime.now();
         List<Object[]> resultados = reservaRepository.contarReservasVigentesPorEstado(hoy, ahora);

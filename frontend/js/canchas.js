@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", async function () {
 
     // 1. Control de sesión del usuario
-    const usuarioGuardado = localStorage.getItem("usuario");
+    const usuarioGuardado = sessionStorage.getItem("usuario");
 
     if (!usuarioGuardado) {
         window.location.href = "login.html";
@@ -56,8 +56,28 @@ document.addEventListener("DOMContentLoaded", async function () {
                     return;
                 }
 
+                const hoyStr = new Date().toISOString().split("T")[0];
+
                 canchas.forEach(c => {
-                    const suspendida = c.estado === "SUSPENDIDA";
+                    const esEstadoSuspendida = c.estado === "SUSPENDIDA";
+                    const suspendidaDesde = c.suspendidaDesde; // Formato "YYYY-MM-DD"
+
+                    // CORREGIDO: La cancha solo se bloquea visualmente si ya llegó o pasó la fecha de suspensión.
+                    // Si la fecha de suspensión es futura, la dejamos interactiva para que el usuario pueda reservar antes.
+                    let estaBloqueadaAhora = false;
+                    let mensajeAviso = "";
+
+                    if (esEstadoSuspendida) {
+                        if (!suspendidaDesde || suspendidaDesde <= hoyStr) {
+                            // Si está suspendida y no tiene fecha o la fecha ya es hoy o pasada -> Bloqueo total
+                            estaBloqueadaAhora = true;
+                            mensajeAviso = '<span style="color: #ff5252; font-weight: bold; display: block; margin-top: 10px;">🔴 EN REPARACIÓN</span>';
+                        } else {
+                            // Si está suspendida pero la fecha es FUTURA -> Permite reservar avisando la fecha de mantenimiento
+                            estaBloqueadaAhora = false;
+                            mensajeAviso = `<span style="color: #fbbf24; font-weight: bold; display: block; margin-top: 6px; font-size: 12px;">⚠️ En mantenimiento a partir del ${suspendidaDesde}</span>`;
+                        }
+                    }
 
                     // Obtener valores con soporte seguro para nombres antiguos y nuevos
                     const valorReservaNum = c.valorReserva !== undefined ? c.valorReserva : (c.valorPorHora !== undefined ? c.valorPorHora : 0);
@@ -70,7 +90,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                     const tarjeta = document.createElement("div");
                     tarjeta.className = "cancha";
 
-                    if (suspendida) {
+                    if (estaBloqueadaAhora) {
                         tarjeta.style.opacity = "0.35";
                         tarjeta.style.pointerEvents = "none";
                     }
@@ -81,9 +101,10 @@ document.addEventListener("DOMContentLoaded", async function () {
                         <p>${c.descripcion || "Césped sintético"}</p>
                         <p><strong>Valor de la reserva:</strong> $${valorReservaFormateado}</p>
                         <p><strong>Valor final del turno:</strong> $${valorFinalFormateado}</p>
-                        ${suspendida 
-                            ? '<span style="color: #ff5252; font-weight: bold; display: block; margin-top: 10px;">🔴 EN REPARACIÓN</span>' 
-                            : `<a href="horarios.html?id=${c.idCancha}"><button>VER HORARIOS</button></a>`
+                        ${mensajeAviso}
+                        ${!estaBloqueadaAhora 
+                            ? `<a href="horarios.html?id=${c.idCancha}"><button style="margin-top: 10px;">VER HORARIOS</button></a>` 
+                            : ''
                         }
                     `;
 

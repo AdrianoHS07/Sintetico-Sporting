@@ -21,6 +21,9 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
             long idCancha, LocalDate fecha, List<String> estados
     );
 
+    // Nuevo método para buscar reservas por su estado exacto (ej. PENDIENTE_PAGO)
+    List<Reserva> findByEstado(String estado);
+
     // Consulta dinámica para agrupar y contar por estado real de la BD (todas)
     @Query("SELECT r.estado, COUNT(r) FROM Reserva r GROUP BY r.estado")
     List<Object[]> contarReservasPorEstado();

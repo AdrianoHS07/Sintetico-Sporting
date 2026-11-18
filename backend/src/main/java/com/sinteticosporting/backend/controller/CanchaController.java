@@ -39,9 +39,14 @@ public class CanchaController {
         }
     }
 
+    // CORREGIDO: Recibe correctamente la fecha de suspensión por parámetro RequestParam
     @PutMapping("/estado/{id}")
-    public ResponseEntity<Cancha> cambiarEstado(@PathVariable Long id, @RequestParam String estado) {
-        Cancha canchaActualizada = canchaService.cambiarEstadoCancha(id, estado);
+    public ResponseEntity<Cancha> cambiarEstado(
+            @PathVariable Long id, 
+            @RequestParam String estado, 
+            @RequestParam(required = false) String fechaSuspension) {
+        
+        Cancha canchaActualizada = canchaService.cambiarEstadoCanchaConFecha(id, estado, fechaSuspension);
         if (canchaActualizada != null) {
             return ResponseEntity.ok(canchaActualizada);
         }

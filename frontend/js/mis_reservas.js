@@ -7,9 +7,9 @@ document.addEventListener("DOMContentLoaded", function () {
     let filtroActual = "TODAS";
     let reservas = [];
 
-    // 1. Obtener ID de usuario desde localStorage
+    // 1. Obtener ID de usuario desde sessionStorage (CORREGIDO: Coincide con login.js y canchas.js)
     function obtenerIdUsuarioLogueado() {
-        const usuarioGuardado = localStorage.getItem("usuario");
+        const usuarioGuardado = sessionStorage.getItem("usuario");
         if (usuarioGuardado) {
             try {
                 const u = JSON.parse(usuarioGuardado);
